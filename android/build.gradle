@@ -1,0 +1,64 @@
+group = "com.adester.adster_poc"
+version = "1.0"
+
+buildscript {
+    ext.kotlin_version = '2.1.0'  // ✅ set Kotlin version here
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.7.3")
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://storage.googleapis.com/download.flutter.io' }
+        maven {
+            url = uri("https://maven.pkg.github.com/adster-tech/orchestration-sdk")
+            credentials {
+                username = "adster-demo"
+                password = "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"
+            }
+        }
+    }
+}
+
+apply plugin: "com.android.library"
+
+android {
+    namespace = "com.adester.adster_poc"
+
+    compileSdk = 35
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdk = 21
+    }
+
+    dependencies {
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("org.mockito:mockito-core:5.0.0")
+        implementation 'com.adster:orchestrationsdk:1.3.00'
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version" // okay even for Java
+    }
+
+    testOptions {
+        unitTests.all {
+            testLogging {
+               events "passed", "skipped", "failed", "standardOut", "standardError"
+               outputs.upToDateWhen {false}
+               showStandardStreams = true
+            }
+        }
+    }
+}
