@@ -1,4 +1,4 @@
-package com.adester.adster_poc;
+package com.adster.flutter_sdk;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -15,10 +15,10 @@ import org.junit.Test;
  * you can run them directly from IDEs that support JUnit such as Android Studio.
  */
 
-public class AdsterPocPluginTest {
+public class AdsterSDKPluginTest {
   @Test
   public void onMethodCall_getPlatformVersion_returnsExpectedValue() {
-    AdsterPocPlugin plugin = new AdsterPocPlugin();
+    AdsterSDKPlugin plugin = new AdsterSDKPlugin();
 
     final MethodCall call = new MethodCall("getPlatformVersion", null);
     MethodChannel.Result mockResult = mock(MethodChannel.Result.class);

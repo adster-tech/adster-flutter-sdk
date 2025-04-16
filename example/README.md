@@ -1,6 +1,6 @@
-# adster_poc_example
+# flutter_sdk_example
 
-Demonstrates how to use the adster_poc plugin.
+Demonstrates how to use the flutter_sdk plugin.
 
 ## Getting Started
 

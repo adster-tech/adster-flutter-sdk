@@ -1,4 +1,4 @@
-# adster_poc
+# flutter_sdk
 
 A new Flutter project.
 

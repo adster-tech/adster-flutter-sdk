@@ -1,4 +1,4 @@
-package com.adester.adster_poc_example;
+package com.adster.flutter_sdk_example;
 
 import io.flutter.embedding.android.FlutterActivity;
 

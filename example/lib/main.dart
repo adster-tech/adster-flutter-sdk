@@ -1,10 +1,9 @@
-import 'package:adster_poc/adster_banner_ads.dart';
-import 'package:adster_poc_example/my_banner_ad.dart';
+import 'package:flutter_sdk/adster_banner_ads.dart';
+import 'package:flutter_sdk/adster_sdk.dart';
+import 'package:flutter_sdk_example/my_banner_ad.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-
 import 'package:flutter/services.dart';
-import 'package:adster_poc/adster_poc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +18,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _adsterPocPlugin = AdsterPoc();
+  final _adsterPocPlugin = AdsterSDK();
 
   @override
   void initState() {
@@ -60,8 +59,14 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('Running on: $_platformVersion\n'),
-              Flexible(child: AdsterBannerAds(adPlacementName: "adster_banner_300x250")),
-              Flexible(child: AdsterBannerAds(adPlacementName: "adster_banner_320x50")),
+              Flexible(
+                child: AdsterBannerAds(
+                  adPlacementName: "adster_banner_300x250",
+                ),
+              ),
+              Flexible(
+                child: AdsterBannerAds(adPlacementName: "adster_banner_320x50"),
+              ),
             ],
           ),
         ),

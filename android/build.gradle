@@ -1,4 +1,4 @@
-group = "com.adester.adster_poc"
+group = "com.adster.flutter_sdk"
 version = "1.0"
 
 buildscript {
@@ -32,7 +32,7 @@ rootProject.allprojects {
 apply plugin: "com.android.library"
 
 android {
-    namespace = "com.adester.adster_poc"
+    namespace = "com.adster.flutter_sdk"
 
     compileSdk = 35
 

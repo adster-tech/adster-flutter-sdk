@@ -3,7 +3,7 @@ import UIKit
 import XCTest
 
 
-@testable import adster_poc
+@testable import flutter_sdk
 
 // This demonstrates a simple unit test of the Swift portion of this plugin's implementation.
 //

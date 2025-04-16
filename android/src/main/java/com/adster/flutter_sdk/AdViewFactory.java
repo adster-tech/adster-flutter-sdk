@@ -1,4 +1,4 @@
-package com.adester.adster_poc;
+package com.adster.flutter_sdk;
 
 import android.content.Context;
 import android.util.Log;

@@ -1,4 +1,4 @@
-import 'package:adster_poc/adster_banner_ads.dart';
+import 'package:flutter_sdk/adster_banner_ads.dart';
 import 'package:flutter/cupertino.dart';
 
 class MyBannerAds extends StatelessWidget {

@@ -1,4 +1,4 @@
-name: adster_poc
+name: flutter_sdk
 description: "A new Flutter project."
 version: 0.0.1
 homepage:
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: ^2.1.8
 
 dev_dependencies:
   flutter_test:
@@ -35,8 +35,8 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.adester.adster_poc
-        pluginClass: AdsterPocPlugin
+        package: com.adster.flutter_sdk
+        pluginClass: AdsterSDKPlugin
       ios:
         pluginClass: AdsterPocPlugin
 

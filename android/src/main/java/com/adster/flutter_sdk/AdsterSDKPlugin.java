@@ -1,4 +1,4 @@
-package com.adester.adster_poc;
+package com.adster.flutter_sdk;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,7 +12,6 @@ import com.adster.sdk.mediation.AdSter;
 import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationNativeAd;
-import com.adster.sdk.mediation.MediationNativeAdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 
@@ -26,9 +25,9 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 /**
- * AdsterPocPlugin
+ * AdsterSDKPlugin
  */
-public class AdsterPocPlugin implements FlutterPlugin, MethodCallHandler {
+public class AdsterSDKPlugin implements FlutterPlugin, MethodCallHandler {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -38,10 +37,10 @@ public class AdsterPocPlugin implements FlutterPlugin, MethodCallHandler {
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-        Log.d("AdsterPocPlugin", "onAttachedToEngine");
+        Log.d("AdsterSDKPlugin", "onAttachedToEngine");
         context = flutterPluginBinding.getApplicationContext();
         AdSter.INSTANCE.initializeSdk(flutterPluginBinding.getApplicationContext(), AdapterStatus -> {
-            Log.d("AdsterPocPlugin", "AdapterStatus: " + AdapterStatus);
+            Log.d("AdsterSDKPlugin", "AdapterStatus: " + AdapterStatus);
         });
 
         List<String> testDeviceIds = Arrays.asList("B483487FE7D832D226373700DF3E654C");
@@ -60,10 +59,9 @@ public class AdsterPocPlugin implements FlutterPlugin, MethodCallHandler {
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         if (call.method.equals("getPlatformVersion")) {
             result.success("Android " + android.os.Build.VERSION.RELEASE);
-        }
-        if (call.method.equals("native_ad_data")) {
+        } else if (call.method.equals("native_ad_data")) {
             String adPlacementName = call.argument("adPlacementName");
-            AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, "Your_placement_name").build();
+            AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, adPlacementName).build();
             AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
                 @Override
                 public void onNativeAdLoaded(@NonNull MediationNativeAd ad) {
