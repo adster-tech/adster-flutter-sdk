@@ -1,11 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Choice Logo -->
+    <ImageView
+        android:id="@+id/choiceImageview"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Test" />
-</FrameLayout>
+        android:orientation="horizontal"
+        android:weightSum="10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Media View -->
+        <FrameLayout
+            android:id="@+id/mediaView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/textLayout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="4"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Sample Title"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- Body -->
+            <TextView
+                android:id="@+id/bodyTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Sample Body Text"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- Info -->
+            <TextView
+                android:id="@+id/infoTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                android:visibility="gone"
+                tools:text="Sample Advertiser Text"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- Icon Logo -->
+                <ImageView
+                    android:id="@+id/iconLogoImageView"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerInside" />
+
+                <!-- Rating Bar -->
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:lines="1"
+                    android:numStars="5"
+                    android:stepSize="0.1" />
+            </LinearLayout>
+
+            <!-- CTA Button -->
+            <Button
+                android:id="@+id/ctaButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Learn More" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

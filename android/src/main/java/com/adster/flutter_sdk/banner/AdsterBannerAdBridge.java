@@ -1,72 +1,39 @@
-package com.adster.flutter_sdk;
+package com.adster.flutter_sdk.banner;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import com.adster.flutter_sdk.core.AdsterJSONDataMapper;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationBannerAd;
+import com.adster.sdk.mediation.MediationNativeAd;
+
+import org.json.JSONException;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.platform.PlatformView;
 
-public class AdsterBannerAds implements PlatformView, MethodChannel.MethodCallHandler {
-    final Context context;
-    final FrameLayout container;
+public class AdsterBannerAdBridge implements MethodChannel.MethodCallHandler {
 
-    public AdsterBannerAds(Context context, BinaryMessenger messenger) {
+    final private MethodChannel methodChannel;
+    final private Context context;
+    private View mediaView = null;
+
+    public AdsterBannerAdBridge(BinaryMessenger messenger, Context context) {
+        methodChannel = new MethodChannel(messenger, "adster.channel:adster_banner");
+        methodChannel.setMethodCallHandler(this);
         this.context = context;
-        container = new FrameLayout(context);
-        MethodChannel channel = new MethodChannel(messenger, "adster_banner");
-        channel.setMethodCallHandler(this);
-    }
-
-    @Nullable
-    @Override
-    public View getView() {
-        Log.d("AdsterBannerAds", "getView");
-        container.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-        return container;
-    }
-
-    @Override
-    public void onFlutterViewAttached(@NonNull View flutterView) {
-        Log.d("AdsterBannerAds", "onFlutterViewAttached");
-        PlatformView.super.onFlutterViewAttached(flutterView);
-    }
-
-    @Override
-    public void onFlutterViewDetached() {
-        Log.d("AdsterBannerAds", "onFlutterViewDetached");
-        PlatformView.super.onFlutterViewDetached();
-    }
-
-    @Override
-    public void dispose() {
-        Log.d("AdsterBannerAds", "dispose");
-    }
-
-    @Override
-    public void onInputConnectionLocked() {
-        PlatformView.super.onInputConnectionLocked();
-        Log.d("AdsterBannerAds", "onInputConnectionLocked");
-    }
-
-    @Override
-    public void onInputConnectionUnlocked() {
-        PlatformView.super.onInputConnectionUnlocked();
-        Log.d("AdsterBannerAds", "onInputConnectionUnlocked");
     }
 
     @Override
@@ -81,19 +48,14 @@ public class AdsterBannerAds implements PlatformView, MethodChannel.MethodCallHa
                     @Override
                     public void onBannerAdLoaded(@NonNull MediationBannerAd ad) {
                         super.onBannerAdLoaded(ad);
-                        container.addView(ad.getView());
+                        mediaView = ad.getView();
                         result.success("true");
+
                     }
 
                     @Override
                     public void onFailure(@NonNull AdError adError) {
-                        // Handle failure here
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
-                        container.setBackgroundColor(context.getResources().getColor(android.R.color.holo_blue_bright));
-                        TextView textView = new TextView(context);
-                        textView.setText(adError.getErrorMessage());
-                        container.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 100));
-                        container.addView(textView);
                     }
                 }).withAdsEventsListener(new AdEventsListener() {
                     @Override
@@ -110,5 +72,13 @@ public class AdsterBannerAds implements PlatformView, MethodChannel.MethodCallHa
                 result.error("EMP_PLACEMENT_ID", "Placement id were not supplied", null);
             }
         }
+    }
+
+    View getMediaView() {
+        return mediaView;
+    }
+
+    public void dispose() {
+        methodChannel.setMethodCallHandler(null);
     }
 }

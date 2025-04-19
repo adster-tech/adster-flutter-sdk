@@ -1,0 +1,30 @@
+package com.adster.flutter_sdk.native_ad;
+
+import android.content.Context;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.adster.flutter_sdk.banner.AdsterBannerAds;
+
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.StandardMessageCodec;
+import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugin.platform.PlatformViewFactory;
+
+public class AdsterNativeAdViewFactory extends PlatformViewFactory {
+    private final AdsterNativeAdBridge adsterNativeAdBridge;
+
+    public AdsterNativeAdViewFactory(AdsterNativeAdBridge adsterNativeAdBridge) {
+        super(StandardMessageCodec.INSTANCE);
+        this.adsterNativeAdBridge = adsterNativeAdBridge;
+    }
+
+    @NonNull
+    @Override
+    public PlatformView create(Context context, int viewId, @Nullable Object args) {
+        Log.d(this.getClass().getName(), "create: " + viewId + " Args: " + (args != null ? args.toString() : ""));
+        return new AdsterNativeAds(context, adsterNativeAdBridge);
+    }
+}
