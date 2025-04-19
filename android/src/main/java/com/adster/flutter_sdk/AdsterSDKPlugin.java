@@ -5,9 +5,11 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.webkit.internal.ApiFeature;
 
 import com.adster.flutter_sdk.banner.AdsterBannerAdBridge;
 import com.adster.flutter_sdk.banner.AdsterBannerAdViewFactory;
+import com.adster.flutter_sdk.interstitial_ad.AdsterInterstitialAdBridge;
 import com.adster.flutter_sdk.native_ad.AdsterNativeAdBridge;
 import com.adster.flutter_sdk.native_ad.AdsterNativeAdViewFactory;
 import com.adster.flutter_sdk.rewarded_ad.AdsterRewardedAdBridge;
@@ -37,6 +39,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
     private AdsterNativeAdBridge adsterNativeAdBridge;
     private AdsterRewardedAdBridge adsterRewardedAdBridge;
+    private AdsterInterstitialAdBridge adsterInterstitialAdBridge;
     private AdsterBannerAdBridge adsterBannerAdBridge;
 
     @Override
@@ -72,6 +75,9 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
 
         /*Initialize rewarded ad bridge*/
         adsterRewardedAdBridge = new AdsterRewardedAdBridge(flutterPluginBinding.getBinaryMessenger(), flutterPluginBinding.getApplicationContext());
+
+        /*Initialize interstitial ad bridge*/
+        adsterInterstitialAdBridge = new AdsterInterstitialAdBridge(flutterPluginBinding.getBinaryMessenger(), flutterPluginBinding.getApplicationContext());
     }
 
 
@@ -86,12 +92,18 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         if (adsterRewardedAdBridge != null) {
             adsterRewardedAdBridge.dispose();
         }
+        if (adsterInterstitialAdBridge != null) {
+            adsterInterstitialAdBridge.dispose();
+        }
     }
 
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         if (adsterRewardedAdBridge != null) {
             adsterRewardedAdBridge.setActivity(binding.getActivity());
+        }
+        if (adsterInterstitialAdBridge != null) {
+            adsterInterstitialAdBridge.setActivity(binding.getActivity());
         }
     }
 
@@ -105,10 +117,18 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         if (adsterRewardedAdBridge != null) {
             adsterRewardedAdBridge.setActivity(binding.getActivity());
         }
+        if (adsterInterstitialAdBridge != null) {
+            adsterInterstitialAdBridge.setActivity(binding.getActivity());
+        }
     }
 
     @Override
     public void onDetachedFromActivity() {
-        adsterRewardedAdBridge.setActivity(null);
+        if (adsterRewardedAdBridge != null) {
+            adsterRewardedAdBridge.setActivity(null);
+        }
+        if (adsterInterstitialAdBridge != null) {
+            adsterInterstitialAdBridge.setActivity(null);
+        }
     }
 }

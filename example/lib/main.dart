@@ -18,6 +18,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   AdsterRewardedAds rewardedAds = AdsterRewardedAds();
+  AdsterInterstitialAds interstitialAds = AdsterInterstitialAds();
 
   @override
   void initState() {
@@ -77,7 +78,7 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               Card(
-                margin: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: AdsterNativeAd(
                   adPlacementName: "adster_native_test",
                   onAdLoaded: (value, widget) {
@@ -165,7 +166,44 @@ class _MyAppState extends State<MyApp> {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          "Ads not loaded: ${(snapshot.error as PlatformException).message}",
+                          "Rewarded Ads not loaded: ${(snapshot.error as PlatformException).message}",
+                        ),
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("${snapshot.error}"),
+                    );
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),
+              SizedBox(height: 5),
+              FutureBuilder(
+                future: interstitialAds.loadInterstitialAd(
+                  adPlacementName: "adster_interstitial_test",
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (!(snapshot.data ?? true)) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("Ads not loaded"),
+                      );
+                    } else {
+                      return ElevatedButton(
+                        onPressed: () {
+                          interstitialAds.showInterstitialAd();
+                        },
+                        child: Text("Show Interstitial Ad"),
+                      );
+                    }
+                  } else if (snapshot.hasError) {
+                    if (snapshot.error is Exception) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Interstitial Ads not loaded: ${(snapshot.error as PlatformException).message}",
                         ),
                       );
                     }
