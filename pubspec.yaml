@@ -1,7 +1,7 @@
 name: adster_flutter_sdk
-description: "A new Flutter project."
-version: 0.0.1
-homepage:
+description: "SDK for flutter consumers"
+version: 1.0.0
+homepage: https://github.com/adster-tech/adster-flutter-sdk
 
 environment:
   sdk: ^3.7.2

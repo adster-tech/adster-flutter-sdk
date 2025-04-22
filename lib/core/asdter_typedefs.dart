@@ -1,3 +1,4 @@
+import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:flutter/material.dart' show Widget;
 
 import '../native/adster_mediation_native_ad_model.dart';

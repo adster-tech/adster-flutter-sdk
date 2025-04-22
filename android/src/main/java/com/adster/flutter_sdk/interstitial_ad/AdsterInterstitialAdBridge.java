@@ -26,9 +26,11 @@ public class AdsterInterstitialAdBridge implements MethodChannel.MethodCallHandl
     private Activity activity;
     final private Context context;
     private MediationInterstitialAd mediationInterstitialAd;
+    final private MethodChannel clickMethodChannel;
 
     public AdsterInterstitialAdBridge(BinaryMessenger messenger, Context context) {
         this.methodChannel = new MethodChannel(messenger, "adster.channel:adster_interstitial_ad");
+        this.clickMethodChannel = new MethodChannel(messenger, "adster.channel:adster_interstitial_ad_click");
         this.methodChannel.setMethodCallHandler(this);
         this.context = context;
     }
@@ -50,32 +52,33 @@ public class AdsterInterstitialAdBridge implements MethodChannel.MethodCallHandl
                         super.onInterstitialAdLoaded(ad);
                         mediationInterstitialAd = ad;
                         result.success("");
-                        //Show interstitial ad here
+                        clickMethodChannel.invokeMethod("onInterstitialAdLoaded", null);
                     }
 
                     @Override
                     public void onFailure(@NonNull AdError adError) {
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
+                        clickMethodChannel.invokeMethod("onFailure", null);
                     }
                 }).withInterstitialAdEventsListener(new InterstitialAdEventsListener() {
                     @Override
                     public void onAdClicked() {
-                        //Handle ad click here
+                        clickMethodChannel.invokeMethod("onAdClicked", null);
                     }
 
                     @Override
                     public void onAdImpression() {
-                        //Handle ad impression here
+                        clickMethodChannel.invokeMethod("onAdImpression", null);
                     }
 
                     @Override
                     public void onAdOpened() {
-                        //Handle ad open here
+                        clickMethodChannel.invokeMethod("onAdOpened", null);
                     }
 
                     @Override
                     public void onAdClosed() {
-                        //Handle ad closed here
+                        clickMethodChannel.invokeMethod("onAdClosed", null);
                     }
                 }).build().loadAd(configuration);
             } else {

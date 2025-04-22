@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 enum AdsterAdSize {
   small(320.0, 50.0),
   medium(300.0, 250.0),

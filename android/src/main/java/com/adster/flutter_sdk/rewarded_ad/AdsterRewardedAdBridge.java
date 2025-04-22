@@ -20,6 +20,8 @@ import com.adster.sdk.mediation.RewardedAdEventsListener;
 
 import org.json.JSONException;
 
+import java.util.Map;
+
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -27,12 +29,14 @@ import io.flutter.plugin.common.MethodChannel;
 public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
 
     final private MethodChannel methodChannel;
+    final private MethodChannel clickMethodChannel;
     private Activity activity;
     final private Context context;
     private MediationRewardedAd mediationRewardedAd;
 
     public AdsterRewardedAdBridge(BinaryMessenger messenger, Context context) {
         this.methodChannel = new MethodChannel(messenger, "adster.channel:adster_rewarded_ad");
+        this.clickMethodChannel = new MethodChannel(messenger, "adster.channel:adster_rewarded_ad_click");
         this.methodChannel.setMethodCallHandler(this);
         this.context = context;
     }
@@ -53,42 +57,45 @@ public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
                         super.onRewardedAdLoaded(ad);
                         mediationRewardedAd = ad;
                         result.success("");
+                        clickMethodChannel.invokeMethod("onRewardedAdLoaded", null);
                     }
 
                     @Override
                     public void onFailure(@NonNull AdError adError) {
                         //Handle failure callback here
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
+                        clickMethodChannel.invokeMethod("onFailure", null);
                     }
                 }).withRewardedAdEventsListener(new RewardedAdEventsListener() {
                     @Override
                     public void onAdClicked() {
-                        //Handle ad click here
+                        clickMethodChannel.invokeMethod("onAdClicked", null);
                     }
 
                     @Override
                     public void onAdImpression() {
-                        //Handle ad click here
+                        clickMethodChannel.invokeMethod("onAdImpression", null);
                     }
 
                     @Override
                     public void onUserEarnedReward(@NonNull Reward reward) {
-                        //Handle ad click here
+                        Map<String, Object> rewardMap = Map.of("amount", reward.getAmount());
+                        clickMethodChannel.invokeMethod("onUserEarnedReward", rewardMap);
                     }
 
                     @Override
                     public void onVideoComplete() {
-                        //Handle ad click here
+                        clickMethodChannel.invokeMethod("onVideoComplete", null);
                     }
 
                     @Override
                     public void onVideoClosed() {
-                        //Handle ad click here
+                        clickMethodChannel.invokeMethod("onVideoClosed", null);
                     }
 
                     @Override
                     public void onVideoStart() {
-                        //Handle ad click here
+                        clickMethodChannel.invokeMethod("onVideoStart", null);
                     }
                 }).build().loadAd(configuration);
             } else {

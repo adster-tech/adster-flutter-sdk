@@ -4,9 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'package:toastification/toastification.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ToastificationWrapper(child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -145,6 +146,7 @@ class _MyAppState extends State<MyApp> {
               FutureBuilder(
                 future: rewardedAds.loadRewardedAd(
                   adPlacementName: "adster_rewarded_test",
+                  callback: getRewardedAdCallback(),
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -182,6 +184,7 @@ class _MyAppState extends State<MyApp> {
               FutureBuilder(
                 future: interstitialAds.loadInterstitialAd(
                   adPlacementName: "adster_interstitial_test",
+                  callback: getInterstitialAdCallback(),
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
@@ -219,6 +222,128 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
+    );
+  }
+
+  AdsterInterstitialAdsCallback getInterstitialAdCallback() {
+    return AdsterInterstitialAdsCallback(
+      onInterstitialAdLoaded: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("InterstitialAd:onInterstitialAdLoaded"),
+        );
+      },
+      onAdClicked: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("InterstitialAd:onAdClicked"),
+        );
+      },
+      onAdImpression: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("InterstitialAd:onAdImpression"),
+        );
+      },
+      onAdOpened: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("InterstitialAd:onAdOpened"),
+        );
+      },
+      onAdClosed: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("InterstitialAd:onAdClosed"),
+        );
+      },
+      onFailure: () {
+        toastification.show(
+          type: ToastificationType.error,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("InterstitialAd:onFailure"),
+        );
+      },
+    );
+  }
+
+  AdsterRewardedAdCallback getRewardedAdCallback() {
+    return AdsterRewardedAdCallback(
+      onRewardedAdLoaded: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("RewardedAd:onRewardedAdLoaded"),
+        );
+      },
+      onAdClicked: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("RewardedAd:onAdClicked"),
+        );
+      },
+      onAdImpression: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("RewardedAd:onAdImpression"),
+        );
+      },
+      onUserEarnedReward: (rewardAmount) {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("RewardedAd:onUserEarnedReward: \$$rewardAmount"),
+        );
+      },
+      onVideoComplete: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("RewardedAd:onVideoComplete"),
+        );
+      },
+      onVideoClosed: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("RewardedAd:onVideoClosed"),
+        );
+      },
+      onFailure: () {
+        toastification.show(
+          type: ToastificationType.error,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("RewardedAd:onFailure"),
+        );
+      },
+      onVideoStart: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("RewardedAd:onVideoStart"),
+        );
+      },
     );
   }
 }
