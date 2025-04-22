@@ -1,15 +1,17 @@
-# flutter_sdk
+## Adster Flutter SDK Example
 
-A new Flutter project.
+This Flutter project demonstrates the integration of the adster_flutter_sdk for showing various ad formats including:
+- Banner Ads
+- Native Ads
+- Interstitial Ads
+- Rewarded Ads
 
-## Getting Started
+## ✨ Features
+	•	Display banner ads in multiple sizes
+	•	Integrate native ads with customizable UI
+	•	Load and display interstitial and rewarded ads with event callbacks
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🔒 License
 
+This project is licensed under the MIT License. See the [LICENSE](https://pub.dev/packages/adster_flutter_sdk/license) file for details.
