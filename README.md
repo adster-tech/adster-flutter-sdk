@@ -13,7 +13,7 @@ This Flutter project demonstrates the integration of the `adster_flutter_sdk` fo
 
 ### 🔐 Authentication Setup for Adster Orchestration SDK
 
-To securely access the native Adster SDK hosted on GitHub Packages, your project must provide authentication credentials. These are required to fetch the dependency from our private Maven repository.
+To securely access the native Adster SDK hosted on GitHub Packages, your project must provide authentication credentials. These are required to fetch the sdk from our private Maven repository.
 
 #### 📦 Step 1: Add Maven Credentials
 
