@@ -19,12 +19,21 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven { url 'https://storage.googleapis.com/download.flutter.io' }
+        // Adster SDK repository
         maven {
             url = uri("https://maven.pkg.github.com/adster-tech/orchestration-sdk")
             credentials {
-                username = "adster-demo"
-                password = "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"
+                username = project.findProperty("adsterMavenUsername") ?: System.getenv("ADSTER_MAVEN_USERNAME")
+                password = project.findProperty("adsterMavenPassword") ?: System.getenv("ADSTER_MAVEN_PASSWORD")
             }
+        }
+
+        // Fail fast if credentials are missing
+        if (
+                (!project.hasProperty("adsterMavenUsername") && System.getenv("ADSTER_MAVEN_USERNAME") == null)
+                || (!project.hasProperty("adsterMavenPassword") && System.getenv("ADSTER_MAVEN_PASSWORD") == null)
+        ) {
+            throw GradleException("! Missing Adster Maven credentials. Please set 'adsterMavenUsername' and 'adsterMavenPassword' in gradle.properties or as environment variables (ADSTER_MAVEN_USERNAME, ADSTER_MAVEN_PASSWORD).")
         }
     }
 }

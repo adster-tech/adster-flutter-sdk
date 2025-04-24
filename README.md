@@ -11,6 +11,54 @@ This Flutter project demonstrates the integration of the `adster_flutter_sdk` fo
 
 ## 📱 Android Setup
 
+### 🔐 Authentication Setup for Adster Orchestration SDK
+
+To securely access the native Adster SDK hosted on GitHub Packages, your project must provide authentication credentials. These are required to fetch the dependency from our private Maven repository.
+
+#### 📦 Step 1: Add Maven Credentials
+
+You can provide the credentials in **either of two ways**:
+
+##### 🔧 Option A: Add to `gradle.properties`
+
+Add the following lines to either your project’s `android/gradle.properties` file **or** your global `~/.gradle/gradle.properties`:
+
+```properties
+adsterMavenUsername=YOUR_GITHUB_USERNAME
+adsterMavenPassword=YOUR_PERSONAL_ACCESS_TOKEN
+```
+
+> 💡 You can generate a [GitHub Personal Access Token (classic)](https://github.com/settings/tokens?type=beta) with `read:packages` and `repo` scopes.
+
+##### 🌐 Option B: Use Environment Variables (ideal for CI/CD)
+
+Alternatively, you can export these environment variables in your terminal or CI setup:
+
+```bash
+export ADSTER_MAVEN_USERNAME=YOUR_GITHUB_USERNAME
+export ADSTER_MAVEN_PASSWORD=YOUR_PERSONAL_ACCESS_TOKEN
+```
+
+---
+
+#### ⚠️ Build Fails Without Credentials
+
+If credentials are not set, the build will fail fast with a clear error message:
+
+```text
+❗ Missing Adster Maven credentials.
+Please set 'adsterMavenUsername' and 'adsterMavenPassword'
+in gradle.properties or as environment variables.
+```
+
+#### ✅ That's It!
+
+Once credentials are provided, the Flutter plugin will be able to fetch and integrate the native orchestration SDK seamlessly.
+
+If you face any issues, feel free to contact [support@adster.tech](mailto:support@adster.tech).
+
+---
+
 ### ✅ Manifest Changes Required for SDK
 
 Please add the following permissions to your Android `AndroidManifest.xml`:
@@ -34,6 +82,8 @@ If you don’t have an AdMob account and want to test SDK initialization, also a
     android:value="ca-app-pub-7640426597645136~3443205346" />
 ```
 
+
+
 ---
 
 ## 🍏 iOS Setup
@@ -43,6 +93,7 @@ Coming soon
 ```
 
 ---
+
 
 ## 📐 Banner Ads
 
