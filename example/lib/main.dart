@@ -6,7 +6,12 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+
+  ///ToastificationWrapper (optional)
+  ///Just to toast the click
   runApp(ToastificationWrapper(child: const MyApp()));
 }
 
@@ -18,12 +23,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  ///keeping it global to prevent it from reload again & again
   AdsterRewardedAds rewardedAds = AdsterRewardedAds();
+  late Future rewardAdFuture;
+
+  ///keeping it global to prevent it from reload again & again
   AdsterInterstitialAds interstitialAds = AdsterInterstitialAds();
+  late Future interstitialAdFuture;
 
   @override
   void initState() {
     super.initState();
+    rewardAdFuture = rewardedAds.loadRewardedAd(
+      adPlacementName: "adster_rewarded_test",
+      callback: getRewardedAdCallback(),
+    );
+    interstitialAdFuture = interstitialAds.loadInterstitialAd(
+      adPlacementName: "adster_interstitial_test",
+      callback: getInterstitialAdCallback(),
+    );
   }
 
   @override
@@ -82,7 +100,7 @@ class _MyAppState extends State<MyApp> {
                 margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: AdsterNativeAd(
                   adPlacementName: "adster_native_test",
-                  onAdLoaded: (value, widget) {
+                  onAdLoaded: (value, widget, clickHandler) {
                     return SizedBox(
                       height: 200,
                       child: Row(
@@ -126,7 +144,12 @@ class _MyAppState extends State<MyApp> {
                                   Text(value.body ?? ""),
                                   SizedBox(height: 5),
                                   MaterialButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      clickHandler.call(
+                                        AdsterNativeAdClickComponent
+                                            .callToAction,
+                                      );
+                                    },
                                     color: Colors.grey,
                                     child: Text(value.callToAction ?? ""),
                                   ),
@@ -144,10 +167,7 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
               FutureBuilder(
-                future: rewardedAds.loadRewardedAd(
-                  adPlacementName: "adster_rewarded_test",
-                  callback: getRewardedAdCallback(),
-                ),
+                future: rewardAdFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (!(snapshot.data ?? true)) {
@@ -182,10 +202,7 @@ class _MyAppState extends State<MyApp> {
               ),
               SizedBox(height: 5),
               FutureBuilder(
-                future: interstitialAds.loadInterstitialAd(
-                  adPlacementName: "adster_interstitial_test",
-                  callback: getInterstitialAdCallback(),
-                ),
+                future: interstitialAdFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     if (!(snapshot.data ?? true)) {

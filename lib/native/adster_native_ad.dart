@@ -7,16 +7,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:adster_flutter_sdk/core/asdter_typedefs.dart';
 
-class AdsterNativeAd extends StatelessWidget {
+class AdsterNativeAd extends StatefulWidget {
   final String adPlacementName;
   final AdsterNativeAdBuilder onAdLoaded;
   final AdsterAdErrorBuilder onFailure;
   final Widget? loadingWidget;
-  final MethodChannel _channel = MethodChannel(
-    'adster.channel:adster_native_ad',
-  );
 
-  AdsterNativeAd({
+  const AdsterNativeAd({
     super.key,
     required this.adPlacementName,
     required this.onAdLoaded,
@@ -25,22 +22,42 @@ class AdsterNativeAd extends StatelessWidget {
   });
 
   @override
+  State<StatefulWidget> createState() {
+    return _AdsterNativeAdState();
+  }
+}
+
+class _AdsterNativeAdState extends State<AdsterNativeAd> {
+  late Future _loadAdFuture;
+  final MethodChannel _channel = MethodChannel(
+    'adster.channel:adster_native_ad',
+  );
+
+  _AdsterNativeAdState();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAdFuture = _loadAd();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _loadAd(),
+      future: _loadAdFuture,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
           case ConnectionState.waiting:
             {
-              return loadingWidget ?? Container();
+              return widget.loadingWidget ?? Container();
             }
           case ConnectionState.active:
           case ConnectionState.done:
             {
               if (snapshot.hasData) {
                 Map<String, dynamic> data = jsonDecode(snapshot.data);
-                return onAdLoaded(
+                return widget.onAdLoaded(
                   AdsterMediationNativeAd(
                     body: data['body'],
                     callToAction: data['callToAction'],
@@ -52,17 +69,27 @@ class AdsterNativeAd extends StatelessWidget {
                         data['overrideImpressionHandling'],
                   ),
                   _getPlatformWidget(),
+                  (clickComponentType) {
+                    _channel
+                        .invokeMethod(
+                          "nativeMediaClick",
+                          clickComponentType.name,
+                        )
+                        .then((value) {
+                          log(value);
+                        });
+                  },
                 );
               } else if (snapshot.hasError) {
                 if (snapshot.error is PlatformException) {
-                  return onFailure(
+                  return widget.onFailure(
                     AdsterAdsException(
                       code: (snapshot.error as PlatformException).code,
                       message: (snapshot.error as PlatformException).message,
                     ),
                   );
                 }
-                return onFailure(
+                return widget.onFailure(
                   AdsterAdsException(
                     code: 'UNKNOWN',
                     message: snapshot.error.toString(),
@@ -79,7 +106,7 @@ class AdsterNativeAd extends StatelessWidget {
 
   Future<dynamic> _loadAd() async {
     dynamic data = await _channel.invokeMethod('loadBanner', {
-      'adPlacementName': adPlacementName,
+      'adPlacementName': widget.adPlacementName,
     });
     log(data);
     return data;

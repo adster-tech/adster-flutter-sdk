@@ -13,6 +13,7 @@ import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationNativeAd;
+import com.adster.sdk.mediation.MediationNativeAdView;
 
 import org.json.JSONException;
 
@@ -25,10 +26,13 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
     final private MethodChannel methodChannel;
     final private Context context;
     private View mediaView = null;
+    final private MethodChannel clickMethodChannel;
     private MediationNativeAd nativeAd;
+    private MediationNativeAdView mediationNativeAdView;
 
     public AdsterNativeAdBridge(BinaryMessenger messenger, Context context) {
         this.methodChannel = new MethodChannel(messenger, "adster.channel:adster_native_ad");
+        this.clickMethodChannel = new MethodChannel(messenger, "adster.channel:adster_native_ad_click");
         this.methodChannel.setMethodCallHandler(this);
         this.context = context;
     }
@@ -48,6 +52,7 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
                         try {
                             String data = new AdsterJSONDataMapper().toJSONStr(ad);
                             result.success(data);
+                            clickMethodChannel.invokeMethod("onNativeAdLoaded", null);
                         } catch (JSONException e) {
                             result.error("DATA_PARSE_ERROR", e.getMessage(), null);
                         }
@@ -57,20 +62,28 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
                     public void onFailure(@NonNull AdError adError) {
                         //Handle failure callback here
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
+                        clickMethodChannel.invokeMethod("onFailure", adError.getErrorMessage());
                     }
                 }).withAdsEventsListener(new AdEventsListener() {
                     @Override
                     public void onAdClicked() {
-
+                        clickMethodChannel.invokeMethod("onAdClicked", null);
                     }
 
                     @Override
                     public void onAdImpression() {
-                        //Handle ad impression here
+                        clickMethodChannel.invokeMethod("onAdImpression", null);
                     }
                 }).build().loadAd(configuration);
             } else {
                 result.error("EMP_PLACEMENT_ID", "Placement id were not supplied", null);
+            }
+        } else if (call.method.equals("nativeMediaClick")) {
+            if (mediationNativeAdView != null) {
+                mediationNativeAdView.onClick(mediationNativeAdView.getBodyView());
+                result.success("");
+            } else {
+                result.error("NATIVE_AD_NOT_LOADED", "Native ad not loaded", null);
             }
         } else {
             result.notImplemented();
@@ -87,5 +100,9 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
 
     public MediationNativeAd getNativeAd() {
         return nativeAd;
+    }
+
+    public void setMediationNativeAdView(MediationNativeAdView mediationNativeAdView) {
+        this.mediationNativeAdView = mediationNativeAdView;
     }
 }

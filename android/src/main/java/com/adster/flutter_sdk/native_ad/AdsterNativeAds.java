@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import com.adster.flutter_sdk.R;
 import com.adster.sdk.mediation.MediationNativeAd;
 import com.adster.sdk.mediation.MediationNativeAdView;
-import com.bumptech.glide.Glide;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,6 +85,7 @@ public class AdsterNativeAds implements PlatformView {
         ad.trackViews(adView, null, map);
         // Set MediationNativeAd object
         adView.setNativeAd(ad);
+        adsterNativeAdBridge.setMediationNativeAdView(adView);
         // Ad native ad view to container
         container.removeAllViews();
         container.addView(adView);

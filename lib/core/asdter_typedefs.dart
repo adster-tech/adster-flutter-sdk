@@ -1,12 +1,19 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
+import 'package:adster_flutter_sdk/core/adster_constants.dart';
 import 'package:flutter/material.dart' show Widget;
 
 import '../native/adster_mediation_native_ad_model.dart';
 
 typedef AdsterNativeAdBuilder =
-    Widget Function(AdsterMediationNativeAd value, Widget nativeMediaView);
+    Widget Function(
+      AdsterMediationNativeAd value,
+      Widget nativeMediaView,
+      AdsterClickHandler clickHandler,
+    );
 typedef AdsterBannerAdBuilder = Widget Function(Widget bannerView);
 typedef AdsterAdErrorBuilder = Widget Function(AdsterAdsException error);
+typedef AdsterClickHandler =
+    void Function(AdsterNativeAdClickComponent clickComponentType);
 
 class AdsterAdsException implements Exception {
   /// An error code.

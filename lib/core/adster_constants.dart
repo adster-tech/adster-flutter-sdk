@@ -8,7 +8,23 @@ enum AdsterAdSize {
 
   const AdsterAdSize(this.width, this.height);
 
-  factory AdsterAdSize.custom(num width, num height) {
+  factory AdsterAdSize.custom(double width, double height) {
     return AdsterAdSize.custom(width, height);
+  }
+}
+
+enum AdsterNativeAdClickComponent {
+  body("body"),
+  callToAction("callToAction"),
+  headLine("headLine"),
+  imageUrl("imageUrl"),
+  logo("logo");
+
+  final String name;
+
+  const AdsterNativeAdClickComponent(this.name);
+
+  factory AdsterNativeAdClickComponent.custom(String name) {
+    return AdsterNativeAdClickComponent.custom(name);
   }
 }

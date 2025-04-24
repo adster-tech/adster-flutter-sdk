@@ -5,7 +5,6 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.webkit.internal.ApiFeature;
 
 import com.adster.flutter_sdk.banner.AdsterBannerAdBridge;
 import com.adster.flutter_sdk.banner.AdsterBannerAdViewFactory;
@@ -17,11 +16,6 @@ import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSter;
-import com.adster.sdk.mediation.AdSterAdLoader;
-import com.adster.sdk.mediation.MediationAdListener;
-import com.adster.sdk.mediation.MediationNativeAd;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.RequestConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,10 +47,10 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         });
 
         /*For testing purposes only*/
-        List<String> testDeviceIds = Arrays.asList("B483487FE7D832D226373700DF3E654C");
+        /*List<String> testDeviceIds = Arrays.asList("B483487FE7D832D226373700DF3E654C");
         RequestConfiguration configuration =
                 new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);
+        MobileAds.setRequestConfiguration(configuration);*/
 
         adsterBannerAdBridge = new AdsterBannerAdBridge(flutterPluginBinding.getBinaryMessenger(), context);
 
