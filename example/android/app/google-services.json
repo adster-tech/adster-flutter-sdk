@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "524210584784",
+    "project_id": "mba-firebase-ai-app",
+    "storage_bucket": "mba-firebase-ai-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524210584784:android:76c8b2107c4275c0f8f2d5",
+        "android_client_info": {
+          "package_name": "com.adster.adsterpoc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUaimau4pCGWqMel6uXNtsCB6GRouz9GA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

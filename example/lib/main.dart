@@ -5,14 +5,24 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:toastification/toastification.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initialiseFirebase();
   runApp(const MyApp());
 
   ///ToastificationWrapper (optional)
   ///Just to toast the click
   runApp(ToastificationWrapper(child: const MyApp()));
+}
+
+Future<void> initialiseFirebase() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatefulWidget {
