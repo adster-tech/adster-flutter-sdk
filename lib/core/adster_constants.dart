@@ -17,8 +17,8 @@ enum AdsterNativeAdClickComponent {
   body("body"),
   callToAction("callToAction"),
   headLine("headLine"),
-  imageUrl("imageUrl"),
-  logo("logo");
+  logo("logo"),
+  ratingBar("ratingBar");
 
   final String name;
 

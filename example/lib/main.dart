@@ -1,5 +1,6 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:adster_flutter_sdk/core/adster_constants.dart';
+import 'package:adster_flutter_sdk/native/adster_native_ad_callback.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -164,6 +165,7 @@ class _MyAppState extends State<MyApp> {
                   onFailure: (AdsterAdsException error) {
                     return Text(error.message ?? "");
                   },
+                  clickCallback: getNativeAdCallback(),
                 ),
               ),
               FutureBuilder(
@@ -239,6 +241,43 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
+    );
+  }
+
+  AdsterNativeAdCallback getNativeAdCallback() {
+    return AdsterNativeAdCallback(
+      onAdClicked: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("NativeAd:onAdClicked"),
+        );
+      },
+      onAdImpression: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("NativeAd:onAdImpression"),
+        );
+      },
+      onFailure: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("NativeAd:onFailure"),
+        );
+      },
+      onNativeAdLoaded: () {
+        toastification.show(
+          type: ToastificationType.success,
+          alignment: Alignment.bottomCenter,
+          style: ToastificationStyle.fillColored,
+          title: Text("NativeAd:onNativeAdLoaded"),
+        );
+      },
     );
   }
 

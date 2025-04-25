@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:adster_flutter_sdk/native/adster_mediation_native_ad_model.dart';
+import 'package:adster_flutter_sdk/native/adster_native_ad_callback.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +12,7 @@ class AdsterNativeAd extends StatefulWidget {
   final AdsterNativeAdBuilder onAdLoaded;
   final AdsterAdErrorBuilder onFailure;
   final Widget? loadingWidget;
+  final AdsterNativeAdCallback? clickCallback;
 
   const AdsterNativeAd({
     super.key,
@@ -19,6 +20,7 @@ class AdsterNativeAd extends StatefulWidget {
     required this.onAdLoaded,
     required this.onFailure,
     this.loadingWidget,
+    this.clickCallback,
   });
 
   @override
@@ -32,6 +34,9 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
   final MethodChannel _channel = MethodChannel(
     'adster.channel:adster_native_ad',
   );
+  final MethodChannel _clickChannel = MethodChannel(
+    'adster.channel:adster_native_ad_click',
+  );
 
   _AdsterNativeAdState();
 
@@ -39,6 +44,23 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
   void initState() {
     super.initState();
     _loadAdFuture = _loadAd();
+    _clickChannel.setMethodCallHandler((call) async {
+      switch (call.method) {
+        case 'onAdClicked':
+          widget.clickCallback?.onAdClicked?.call();
+          break;
+        case 'onAdImpression':
+          widget.clickCallback?.onAdImpression?.call();
+          break;
+        case 'onFailure':
+          widget.clickCallback?.onFailure?.call();
+          break;
+        case 'onNativeAdLoaded':
+          widget.clickCallback?.onNativeAdLoaded?.call();
+          break;
+      }
+      return null;
+    });
   }
 
   @override
@@ -73,7 +95,7 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
                     _channel
                         .invokeMethod(
                           "nativeMediaClick",
-                          clickComponentType.name,
+                          clickComponentType.name.toString(),
                         )
                         .then((value) {
                           log(value);
@@ -128,5 +150,11 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
           '$defaultTargetPlatform is not yet supported by the web_view plugin',
         );
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _clickChannel.setMethodCallHandler(null);
   }
 }

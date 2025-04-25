@@ -80,7 +80,17 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
             }
         } else if (call.method.equals("nativeMediaClick")) {
             if (mediationNativeAdView != null) {
-                mediationNativeAdView.onClick(mediationNativeAdView.getBodyView());
+                if (call.arguments.equals("body")) {
+                    mediationNativeAdView.onClick(mediationNativeAdView.getBodyView());
+                } else if (call.arguments.equals("callToAction")) {
+                    mediationNativeAdView.performClick();
+                } else if (call.arguments.equals("headline")) {
+                    mediationNativeAdView.onClick(mediationNativeAdView.getHeadlineView());
+                } else if (call.arguments.equals("logo")) {
+                    mediationNativeAdView.onClick(mediationNativeAdView.getLogoView());
+                } else if (call.arguments.equals("ratingBar")) {
+                    mediationNativeAdView.onClick(mediationNativeAdView.getRatingBarView());
+                }
                 result.success("");
             } else {
                 result.error("NATIVE_AD_NOT_LOADED", "Native ad not loaded", null);
