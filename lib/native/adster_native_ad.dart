@@ -44,22 +44,24 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
   void initState() {
     super.initState();
     _loadAdFuture = _loadAd();
-    _clickChannel.setMethodCallHandler((call) async {
-      switch (call.method) {
-        case 'onAdClicked':
-          widget.clickCallback?.onAdClicked?.call();
-          break;
-        case 'onAdImpression':
-          widget.clickCallback?.onAdImpression?.call();
-          break;
-        case 'onFailure':
-          widget.clickCallback?.onFailure?.call();
-          break;
-        case 'onNativeAdLoaded':
-          widget.clickCallback?.onNativeAdLoaded?.call();
-          break;
-      }
-      return null;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _clickChannel.setMethodCallHandler((call) async {
+        switch (call.method) {
+          case 'onAdClicked':
+            widget.clickCallback?.onAdClicked?.call();
+            break;
+          case 'onAdImpression':
+            widget.clickCallback?.onAdImpression?.call();
+            break;
+          case 'onFailure':
+            widget.clickCallback?.onFailure?.call();
+            break;
+          case 'onNativeAdLoaded':
+            widget.clickCallback?.onNativeAdLoaded?.call();
+            break;
+        }
+        return null;
+      });
     });
   }
 
