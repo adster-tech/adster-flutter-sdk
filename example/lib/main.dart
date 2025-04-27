@@ -131,18 +131,33 @@ class _MyAppState extends State<MyApp> {
                                       ),
                                       SizedBox(width: 10),
                                       Flexible(
-                                        child: Text(
-                                          value.headLine ?? "",
-                                          maxLines: 2,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                        child: InkWell(
+                                          onTap: () {
+                                            clickHandler.call(
+                                              AdsterNativeAdClickComponent
+                                                  .headline,
+                                            );
+                                          },
+                                          child: Text(
+                                            value.headLine ?? "",
+                                            maxLines: 2,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
                                   SizedBox(height: 5),
-                                  Text(value.body ?? ""),
+                                  InkWell(
+                                    onTap: () {
+                                      clickHandler.call(
+                                        AdsterNativeAdClickComponent.body,
+                                      );
+                                    },
+                                    child: Text(value.body ?? ""),
+                                  ),
                                   SizedBox(height: 5),
                                   MaterialButton(
                                     onPressed: () {

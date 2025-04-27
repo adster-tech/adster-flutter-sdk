@@ -81,15 +81,25 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
         } else if (call.method.equals("nativeMediaClick")) {
             if (mediationNativeAdView != null) {
                 if (call.arguments.equals("body")) {
-                    mediationNativeAdView.onClick(mediationNativeAdView.getBodyView());
+                    if (clickSense()) {
+                        mediationNativeAdView.onClick(mediationNativeAdView.getBodyView());
+                    }
                 } else if (call.arguments.equals("callToAction")) {
-                    mediationNativeAdView.performClick();
+                    if (clickSense()) {
+                        mediationNativeAdView.performClick();
+                    }
                 } else if (call.arguments.equals("headline")) {
-                    mediationNativeAdView.onClick(mediationNativeAdView.getHeadlineView());
+                    if (clickSense()) {
+                        mediationNativeAdView.onClick(mediationNativeAdView.getHeadlineView());
+                    }
                 } else if (call.arguments.equals("logo")) {
-                    mediationNativeAdView.onClick(mediationNativeAdView.getLogoView());
+                    if (clickSense()) {
+                        mediationNativeAdView.onClick(mediationNativeAdView.getLogoView());
+                    }
                 } else if (call.arguments.equals("ratingBar")) {
-                    mediationNativeAdView.onClick(mediationNativeAdView.getRatingBarView());
+                    if (clickSense()) {
+                        mediationNativeAdView.onClick(mediationNativeAdView.getRatingBarView());
+                    }
                 }
                 result.success("");
             } else {
@@ -98,6 +108,16 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
         } else {
             result.notImplemented();
         }
+    }
+
+    private boolean clickSense() {
+        if (TextUtils.isEmpty(nativeAd.getLandingUrl())) {
+            if (mediaView != null) {
+                mediaView.performClick();
+            }
+            return false;
+        }
+        return true;
     }
 
     View getMediaView() {

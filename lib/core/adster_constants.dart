@@ -16,7 +16,7 @@ enum AdsterAdSize {
 enum AdsterNativeAdClickComponent {
   body("body"),
   callToAction("callToAction"),
-  headLine("headLine"),
+  headline("headline"),
   logo("logo"),
   ratingBar("ratingBar");
 
