@@ -21,7 +21,7 @@ rootProject.allprojects {
         maven { url 'https://storage.googleapis.com/download.flutter.io' }
         // Adster SDK repository
         maven {
-            url = uri("https://maven.pkg.github.com/adster-tech/orchestration-sdk")
+            url = uri("https://maven.pkg.github.com/adster-tech/ads-sdk")
             credentials {
                 username = project.findProperty("adsterMavenUsername") ?: System.getenv("ADSTER_MAVEN_USERNAME")
                 password = project.findProperty("adsterMavenPassword") ?: System.getenv("ADSTER_MAVEN_PASSWORD")
@@ -57,7 +57,7 @@ android {
     dependencies {
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.mockito:mockito-core:5.0.0")
-        implementation 'com.adster:orchestrationsdk:1.3.00'
+        implementation 'com.adster:adstersdk:1.3.28'
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version" // okay even for Java
     }
 
