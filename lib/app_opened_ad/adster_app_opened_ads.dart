@@ -1,33 +1,34 @@
 import 'dart:developer';
 
+import 'package:adster_flutter_sdk/app_opened_ad/adster_app_opened_callback_channel.dart';
 import 'package:adster_flutter_sdk/rewarded/adster_rewarded_callback_channel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'adster_rewarded_ads_callback.dart';
+import 'adster_app_opened_ads_callback.dart';
 
-class AdsterRewardedAds {
+class AdsterAppOpenedAds {
   final MethodChannel _channel = MethodChannel(
-    'adster.channel:adster_rewarded_ad',
+    'adster.channel:adster_app_opened_ad',
   );
 
   var key = UniqueKey();
   String? placemenId;
 
-  AdsterRewardedAds();
+  AdsterAppOpenedAds();
 
   Future<dynamic> loadAd({
     required String adPlacementName,
-    AdsterRewardedAdCallback? callback,
+    AdsterAppOpnenedAdCallback? callback,
   }) async {
     if (callback != null) {
-      AdsterRewardedAdCallbackChannel.instance.registerWidget(
+      AdsterAppOpenedAdCallbackChannel.instance.registerWidget(
         key.toString(),
         callback,
       );
     }
     placemenId = adPlacementName;
-    var response = await _channel.invokeMethod('loadRewardedAd', {
+    var response = await _channel.invokeMethod('loadAppOpenedAd', {
       'adPlacementName': adPlacementName,
       'widgetId': key.toString(),
     });
@@ -36,20 +37,10 @@ class AdsterRewardedAds {
   }
 
   Future<dynamic> reloadAd() async {
-    var response = await _channel.invokeMethod('loadRewardedAd', {
+    var response = await _channel.invokeMethod('loadAppOpenedAd', {
       'adPlacementName': placemenId,
       'widgetId': key.toString(),
     });
     return response;
-  }
-
-  Future<void> showRewardedAd() async {
-    var response = await _channel.invokeMethod('showAd').onError((
-      error,
-      stackTrace,
-    ) {
-      return null;
-    });
-    log(response);
   }
 }

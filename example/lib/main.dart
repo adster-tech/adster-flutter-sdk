@@ -1,6 +1,4 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
-import 'package:adster_flutter_sdk/core/adster_constants.dart';
-import 'package:adster_flutter_sdk/native/adster_native_ad_callback.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -12,7 +10,7 @@ void main() async {
   runApp(const MyApp());
 
   ///ToastificationWrapper (optional)
-  ///Just to toast the click
+  ///Just to toast the callback events
   runApp(ToastificationWrapper(child: const MyApp()));
 }
 
@@ -32,17 +30,45 @@ class _MyAppState extends State<MyApp> {
   AdsterInterstitialAds interstitialAds = AdsterInterstitialAds();
   late Future interstitialAdFuture;
 
+  AdsterAppOpenedAds appOpenedAds = AdsterAppOpenedAds();
+
   @override
   void initState() {
     super.initState();
-    rewardAdFuture = rewardedAds.loadRewardedAd(
+
+    rewardAdFuture = rewardedAds.loadAd(
       adPlacementName: "adster_rewarded_test",
       callback: getRewardedAdCallback(),
     );
-    interstitialAdFuture = interstitialAds.loadInterstitialAd(
+
+    interstitialAdFuture = interstitialAds.loadAd(
       adPlacementName: "adster_interstitial_test",
       callback: getInterstitialAdCallback(),
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      appOpenedAds
+          .loadAd(
+            adPlacementName: "adster_app_opened_test",
+            callback: getAppOpenedAdCallback(),
+          )
+          .then((value) {
+            toastification.show(
+              type: ToastificationType.success,
+              alignment: Alignment.bottomCenter,
+              style: ToastificationStyle.fillColored,
+              title: Text("AppOpenedAd:onAppOpenAdLoaded"),
+            );
+          })
+          .onError((error, stackTrace) {
+            toastification.show(
+              type: ToastificationType.error,
+              alignment: Alignment.bottomCenter,
+              style: ToastificationStyle.fillColored,
+              title: Text("AppOpenedAd:onFailure: $error"),
+            );
+          });
+    });
   }
 
   @override
@@ -55,7 +81,11 @@ class _MyAppState extends State<MyApp> {
             mainAxisSize: MainAxisSize.min,
             children: [
               AdsterBannerAd(
+                key: UniqueKey(),
                 adPlacementName: "adster_banner_300x250",
+                clickCallback: getBannerAdCallback(
+                  AdsterAdSize.medium.toString(),
+                ),
                 adSize: AdsterAdSize.medium,
                 loadingWidget: SizedBox(
                   width: AdsterAdSize.medium.width,
@@ -77,7 +107,11 @@ class _MyAppState extends State<MyApp> {
               ),
               SizedBox(height: 10),
               AdsterBannerAd(
+                key: UniqueKey(),
                 adPlacementName: "adster_banner_320x50",
+                clickCallback: getBannerAdCallback(
+                  AdsterAdSize.small.toString(),
+                ),
                 adSize: AdsterAdSize.small,
                 loadingWidget: SizedBox(
                   width: AdsterAdSize.small.width,
@@ -187,19 +221,13 @@ class _MyAppState extends State<MyApp> {
                 future: rewardAdFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    if (!(snapshot.data ?? true)) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Ads not loaded"),
-                      );
-                    } else {
-                      return ElevatedButton(
-                        onPressed: () {
-                          rewardedAds.showRewardedAd();
-                        },
-                        child: Text("Show Rewarded Ad"),
-                      );
-                    }
+                    return ElevatedButton(
+                      onPressed: () {
+                        rewardedAds.showRewardedAd();
+                        rewardedAds.reloadAd();
+                      },
+                      child: Text("Show Rewarded Ad"),
+                    );
                   } else if (snapshot.hasError) {
                     if (snapshot.error is Exception) {
                       return Padding(
@@ -222,19 +250,13 @@ class _MyAppState extends State<MyApp> {
                 future: interstitialAdFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    if (!(snapshot.data ?? true)) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text("Ads not loaded"),
-                      );
-                    } else {
-                      return ElevatedButton(
-                        onPressed: () {
-                          interstitialAds.showInterstitialAd();
-                        },
-                        child: Text("Show Interstitial Ad"),
-                      );
-                    }
+                    return ElevatedButton(
+                      onPressed: () {
+                        interstitialAds.showInterstitialAd();
+                        interstitialAds.reloadAd();
+                      },
+                      child: Text("Show Interstitial Ad"),
+                    );
                   } else if (snapshot.hasError) {
                     if (snapshot.error is Exception) {
                       return Padding(
@@ -259,162 +281,105 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  AdsterBannerAdCallback getBannerAdCallback(String bannerSize) {
+    return AdsterBannerAdCallback(
+      onAdClicked: () {
+        notifySuccess(title: "BannerAd($bannerSize):onAdClicked");
+      },
+      onAdImpression: () {
+        notifySuccess(title: "BannerAd($bannerSize):onAdImpression");
+      },
+    );
+  }
+
   AdsterNativeAdCallback getNativeAdCallback() {
     return AdsterNativeAdCallback(
       onAdClicked: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("NativeAd:onAdClicked"),
-        );
+        notifySuccess(title: "NativeAd:onAdClicked");
       },
       onAdImpression: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("NativeAd:onAdImpression"),
-        );
-      },
-      onFailure: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("NativeAd:onFailure"),
-        );
-      },
-      onNativeAdLoaded: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("NativeAd:onNativeAdLoaded"),
-        );
+        notifySuccess(title: "NativeAd:onAdImpression");
       },
     );
   }
 
   AdsterInterstitialAdsCallback getInterstitialAdCallback() {
     return AdsterInterstitialAdsCallback(
-      onInterstitialAdLoaded: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("InterstitialAd:onInterstitialAdLoaded"),
-        );
-      },
       onAdClicked: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("InterstitialAd:onAdClicked"),
-        );
+        notifySuccess(title: "InterstitialAd:onAdClicked");
       },
       onAdImpression: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("InterstitialAd:onAdImpression"),
-        );
+        notifySuccess(title: "InterstitialAd:onAdImpression");
       },
       onAdOpened: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("InterstitialAd:onAdOpened"),
-        );
+        notifySuccess(title: "InterstitialAd:onAdOpened");
       },
       onAdClosed: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("InterstitialAd:onAdClosed"),
-        );
-      },
-      onFailure: () {
-        toastification.show(
-          type: ToastificationType.error,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("InterstitialAd:onFailure"),
-        );
+        notifySuccess(title: "InterstitialAd:onAdClosed");
       },
     );
   }
 
   AdsterRewardedAdCallback getRewardedAdCallback() {
     return AdsterRewardedAdCallback(
-      onRewardedAdLoaded: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("RewardedAd:onRewardedAdLoaded"),
-        );
-      },
       onAdClicked: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("RewardedAd:onAdClicked"),
-        );
+        notifySuccess(title: "RewardedAd:onAdClicked");
       },
       onAdImpression: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("RewardedAd:onAdImpression"),
-        );
+        notifySuccess(title: "RewardedAd:onAdImpression");
       },
       onUserEarnedReward: (rewardAmount) {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("RewardedAd:onUserEarnedReward: \$$rewardAmount"),
-        );
+        notifySuccess(title: "RewardedAd:onUserEarnedReward: \$$rewardAmount");
       },
       onVideoComplete: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("RewardedAd:onVideoComplete"),
-        );
+        notifySuccess(title: "RewardedAd:onVideoComplete");
       },
       onVideoClosed: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("RewardedAd:onVideoClosed"),
-        );
-      },
-      onFailure: () {
-        toastification.show(
-          type: ToastificationType.error,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("RewardedAd:onFailure"),
-        );
+        notifySuccess(title: "RewardedAd:onVideoClosed");
       },
       onVideoStart: () {
-        toastification.show(
-          type: ToastificationType.success,
-          alignment: Alignment.bottomCenter,
-          style: ToastificationStyle.fillColored,
-          title: Text("RewardedAd:onVideoStart"),
+        notifySuccess(title: "RewardedAd:onVideoStart");
+      },
+    );
+  }
+
+  AdsterAppOpnenedAdCallback getAppOpenedAdCallback() {
+    return AdsterAppOpnenedAdCallback(
+      onAdClicked: () {
+        notifySuccess(title: "AppOpenedAd:onAdClicked");
+      },
+      onAdImpression: () {
+        notifySuccess(title: "AppOpenedAd:onAdImpression");
+      },
+      onAdOpened: () {
+        notifySuccess(title: "AppOpenedAd:onAdOpened");
+      },
+      onAdClosed: () {
+        notifySuccess(title: "AppOpenedAd:onAdClosed");
+      },
+      onFailure: (errorCode, errorMessage) {
+        notifyError(
+          errorMessage: "AppOpenedAd:onFailure: ($errorCode) $errorMessage",
         );
       },
+    );
+  }
+
+  void notifySuccess({required String title}) {
+    toastification.show(
+      type: ToastificationType.success,
+      alignment: Alignment.bottomCenter,
+      style: ToastificationStyle.fillColored,
+      title: Text(title),
+    );
+  }
+
+  void notifyError({required String errorMessage}) {
+    toastification.show(
+      type: ToastificationType.error,
+      alignment: Alignment.bottomCenter,
+      style: ToastificationStyle.fillColored,
+      title: Text(errorMessage),
     );
   }
 }

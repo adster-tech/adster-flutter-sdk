@@ -1,4 +1,6 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
+import 'package:adster_flutter_sdk/banner/adster_banner_ads_callback.dart';
+import 'package:adster_flutter_sdk/banner/adster_banner_callback_channel.dart';
 import 'package:adster_flutter_sdk/core/adster_constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +12,7 @@ class AdsterBannerAd extends StatefulWidget {
   final AdsterBannerAdBuilder? onAdLoaded;
   final AdsterAdErrorBuilder onFailure;
   final Widget? loadingWidget;
+  final AdsterBannerAdCallback? clickCallback;
 
   const AdsterBannerAd({
     super.key,
@@ -18,6 +21,7 @@ class AdsterBannerAd extends StatefulWidget {
     this.onAdLoaded,
     required this.onFailure,
     this.loadingWidget,
+    this.clickCallback,
   });
 
   @override
@@ -29,11 +33,26 @@ class AdsterBannerAd extends StatefulWidget {
 class _AdsterBannerAdState extends State<AdsterBannerAd> {
   final MethodChannel _channel = MethodChannel('adster.channel:adster_banner');
   late Future _loadAdFuture;
+  late String widgetId;
 
   @override
   void initState() {
     super.initState();
+    widgetId = UniqueKey().toString();
     _loadAdFuture = _loadAd();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      AdsterBannerCallbackChannel.instance.registerWidget(
+        widgetId,
+        AdsterBannerAdCallback(
+          onAdClicked: () {
+            widget.clickCallback?.onAdClicked.call();
+          },
+          onAdImpression: () {
+            widget.clickCallback?.onAdImpression.call();
+          },
+        ),
+      );
+    });
   }
 
   @override
@@ -85,6 +104,7 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
   Future<dynamic> _loadAd() async {
     dynamic data = await _channel.invokeMethod('loadBanner', {
       'adPlacementName': widget.adPlacementName,
+      'widgetId': widgetId,
     });
     return data;
   }
@@ -100,5 +120,11 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
           '$defaultTargetPlatform is not yet supported by the web_view plugin',
         );
     }
+  }
+
+  @override
+  void dispose() {
+    AdsterBannerCallbackChannel.instance.removeWidget(widgetId);
+    super.dispose();
   }
 }

@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 
 import com.adster.flutter_sdk.banner.AdsterBannerAds;
 
+import java.util.Map;
+
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
@@ -25,6 +27,11 @@ public class AdsterNativeAdViewFactory extends PlatformViewFactory {
     @Override
     public PlatformView create(Context context, int viewId, @Nullable Object args) {
         Log.d(this.getClass().getName(), "create: " + viewId + " Args: " + (args != null ? args.toString() : ""));
-        return new AdsterNativeAds(context, adsterNativeAdBridge);
+        String widgetId = "";
+        if (args instanceof Map) {
+            Map<String, Object> creationParams = (Map<String, Object>) args;
+            widgetId = String.valueOf(creationParams.get("widgetId"));
+        }
+        return new AdsterNativeAds(context, widgetId, adsterNativeAdBridge);
     }
 }

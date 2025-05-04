@@ -3,6 +3,7 @@ package com.adster.flutter_sdk.rewarded_ad;
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import com.adster.sdk.mediation.RewardedAdEventsListener;
 
 import org.json.JSONException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import io.flutter.plugin.common.BinaryMessenger;
@@ -49,7 +51,9 @@ public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         if (call.method.equals("loadRewardedAd")) {
             String adPlacementName = call.argument("adPlacementName");
-            if (!TextUtils.isEmpty(adPlacementName)) {
+            String widgetId = call.argument("widgetId");
+            Log.d("AdsterRewardedAd", "loadRewardedAd: " + adPlacementName + " widgetId: " + widgetId);
+            if (adPlacementName != null && widgetId != null) {
                 AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, adPlacementName).build();
                 AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
                     @Override
@@ -57,45 +61,43 @@ public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
                         super.onRewardedAdLoaded(ad);
                         mediationRewardedAd = ad;
                         result.success("");
-                        clickMethodChannel.invokeMethod("onRewardedAdLoaded", null);
                     }
 
                     @Override
                     public void onFailure(@NonNull AdError adError) {
                         //Handle failure callback here
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
-                        clickMethodChannel.invokeMethod("onFailure", null);
                     }
-                }).withRewardedAdEventsListener(new RewardedAdEventsListener() {
+                }).withRewardedAdEventsListener(new AdsterRewardedEventAdListener(widgetId) {
+
                     @Override
-                    public void onAdClicked() {
-                        clickMethodChannel.invokeMethod("onAdClicked", null);
+                    public void onAdClicked(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdClicked", getWidgetIdJSON(widgetId));
                     }
 
                     @Override
-                    public void onAdImpression() {
-                        clickMethodChannel.invokeMethod("onAdImpression", null);
+                    public void onAdImpression(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdImpression", getWidgetIdJSON(widgetId));
                     }
 
                     @Override
-                    public void onUserEarnedReward(@NonNull Reward reward) {
-                        Map<String, Object> rewardMap = Map.of("amount", reward.getAmount());
-                        clickMethodChannel.invokeMethod("onUserEarnedReward", rewardMap);
+                    public void onUserEarnedReward(@NonNull String widgetId, @NonNull Reward reward) {
+                        clickMethodChannel.invokeMethod("onUserEarnedReward", getWidgetIdJSON(widgetId));
                     }
 
                     @Override
-                    public void onVideoComplete() {
-                        clickMethodChannel.invokeMethod("onVideoComplete", null);
+                    public void onVideoComplete(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onVideoComplete", getWidgetIdJSON(widgetId));
                     }
 
                     @Override
-                    public void onVideoClosed() {
-                        clickMethodChannel.invokeMethod("onVideoClosed", null);
+                    public void onVideoClosed(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onVideoClosed", getWidgetIdJSON(widgetId));
                     }
 
                     @Override
-                    public void onVideoStart() {
-                        clickMethodChannel.invokeMethod("onVideoStart", null);
+                    public void onVideoStart(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onVideoStart", getWidgetIdJSON(widgetId));
                     }
                 }).build().loadAd(configuration);
             } else {
@@ -111,6 +113,12 @@ public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
         } else {
             result.notImplemented();
         }
+    }
+
+    Map<String, String> getWidgetIdJSON(String widgetId) {
+        Map<String, String> data = new HashMap<>();
+        data.put("widgetId", widgetId);
+        return data;
     }
 
     public void dispose() {

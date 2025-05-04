@@ -1,24 +1,19 @@
 package com.adster.flutter_sdk.banner;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.adster.flutter_sdk.core.AdsterJSONDataMapper;
 import com.adster.sdk.mediation.AdError;
-import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationBannerAd;
-import com.adster.sdk.mediation.MediationNativeAd;
 
-import org.json.JSONException;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -27,11 +22,13 @@ import io.flutter.plugin.common.MethodChannel;
 public class AdsterBannerAdBridge implements MethodChannel.MethodCallHandler {
 
     final private MethodChannel methodChannel;
+    final private MethodChannel clickMethodChannel;
     final private Context context;
     private View mediaView = null;
 
     public AdsterBannerAdBridge(BinaryMessenger messenger, Context context) {
         methodChannel = new MethodChannel(messenger, "adster.channel:adster_banner");
+        clickMethodChannel = new MethodChannel(messenger, "adster.channel:adster_banner_ad_click");
         methodChannel.setMethodCallHandler(this);
         this.context = context;
     }
@@ -41,8 +38,9 @@ public class AdsterBannerAdBridge implements MethodChannel.MethodCallHandler {
         Log.d("AdsterBannerAds", "onMethodCall: " + call.method);
         if (call.method.equals("loadBanner")) {
             String placementId = call.argument("adPlacementName");
-            Log.d("AdsterBannerAds", "loadBanner: " + placementId);
-            if (placementId != null) {
+            String widgetId = call.argument("widgetId");
+            Log.d("AdsterBannerAds", "loadBanner: " + placementId + " widgetId: " + widgetId);
+            if (placementId != null && widgetId != null) {
                 AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, placementId).build();
                 AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
                     @Override
@@ -50,28 +48,33 @@ public class AdsterBannerAdBridge implements MethodChannel.MethodCallHandler {
                         super.onBannerAdLoaded(ad);
                         mediaView = ad.getView();
                         result.success("true");
-
                     }
 
                     @Override
                     public void onFailure(@NonNull AdError adError) {
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
                     }
-                }).withAdsEventsListener(new AdEventsListener() {
+                }).withAdsEventsListener(new AdsterBannerEventAdListener(widgetId) {
                     @Override
-                    public void onAdClicked() {
-                        //Handle ad click here
+                    public void onAdClicked(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdClicked", getWidgetIdJSON(widgetId));
                     }
 
                     @Override
-                    public void onAdImpression() {
-                        //Handle ad impression here
+                    public void onAdImpression(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdImpression", getWidgetIdJSON(widgetId));
                     }
                 }).build().loadAd(configuration);
             } else {
                 result.error("EMP_PLACEMENT_ID", "Placement id were not supplied", null);
             }
         }
+    }
+
+    Map<String, String> getWidgetIdJSON(String widgetId) {
+        Map<String, String> data = new HashMap<>();
+        data.put("widgetId", widgetId);
+        return data;
     }
 
     View getMediaView() {

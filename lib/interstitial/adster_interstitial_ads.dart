@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:adster_flutter_sdk/interstitial/adster_interstitial_callback_channel.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 import 'adster_interstitial_ads_callback.dart';
@@ -8,62 +10,35 @@ class AdsterInterstitialAds {
   final MethodChannel _channel = MethodChannel(
     'adster.channel:adster_interstitial_ad',
   );
-  final MethodChannel _clickChannel = MethodChannel(
-    'adster.channel:adster_interstitial_ad_click',
-  );
+  var key = UniqueKey();
+  String? placemenId;
 
-  AdsterInterstitialAdsCallback? _callback;
+  AdsterInterstitialAds();
 
-  AdsterInterstitialAds() {
-    _clickChannel.setMethodCallHandler((call) async {
-      switch (call.method) {
-        case 'onAdClicked':
-          if (_callback?.onAdClicked != null) {
-            _callback?.onAdClicked();
-          }
-          break;
-        case 'onAdImpression':
-          if (_callback?.onAdImpression != null) {
-            _callback?.onAdImpression();
-          }
-          break;
-        case 'onAdOpened':
-          if (_callback?.onAdOpened != null) {
-            _callback?.onAdOpened();
-          }
-          break;
-        case 'onAdClosed':
-          if (_callback?.onAdClosed != null) {
-            _callback?.onAdClosed();
-          }
-          break;
-        case 'onInterstitialAdLoaded':
-          if (_callback?.onInterstitialAdLoaded != null) {
-            _callback?.onInterstitialAdLoaded!();
-          }
-          break;
-        case 'onFailure':
-          if (_callback?.onFailure != null) {
-            _callback?.onFailure!();
-          }
-          break;
-      }
-    });
-  }
-
-  Future<bool> loadInterstitialAd({
+  Future<dynamic> loadAd({
     required String adPlacementName,
     AdsterInterstitialAdsCallback? callback,
   }) async {
-    _callback = callback;
+    if (callback != null) {
+      AdsterInterstitialAdCallbackChannel.instance.registerWidget(
+        key.toString(),
+        callback,
+      );
+    }
+    placemenId = adPlacementName;
     var response = await _channel.invokeMethod('loadInterstitialAd', {
       'adPlacementName': adPlacementName,
+      'widgetId': key.toString(),
     });
-    log(response);
-    if (response != null) {
-      return true;
-    }
-    return false;
+    return response;
+  }
+
+  Future<dynamic> reloadAd() async {
+    var response = await _channel.invokeMethod('loadInterstitialAd', {
+      'adPlacementName': placemenId,
+      'widgetId': key.toString(),
+    });
+    return response;
   }
 
   Future<void> showInterstitialAd() async {

@@ -1,8 +1,6 @@
 import 'dart:ui';
 
 class AdsterRewardedAdCallback {
-  final VoidCallback? onRewardedAdLoaded;
-  final VoidCallback? onFailure;
   final VoidCallback onAdClicked;
   final VoidCallback onAdImpression;
   final void Function(int? rewardAmount) onUserEarnedReward;
@@ -11,8 +9,6 @@ class AdsterRewardedAdCallback {
   final VoidCallback onVideoStart;
 
   AdsterRewardedAdCallback({
-    this.onRewardedAdLoaded,
-    this.onFailure,
     required this.onAdClicked,
     required this.onAdImpression,
     required this.onUserEarnedReward,

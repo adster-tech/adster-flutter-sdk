@@ -11,6 +11,11 @@ enum AdsterAdSize {
   factory AdsterAdSize.custom(double width, double height) {
     return AdsterAdSize.custom(width, height);
   }
+
+  @override
+  String toString() {
+    return "${width}x$height)";
+  }
 }
 
 enum AdsterNativeAdClickComponent {

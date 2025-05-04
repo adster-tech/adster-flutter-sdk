@@ -137,12 +137,22 @@ AdsterBannerAd(
 
 ## 🎨 Native Ads
 
+### 📏  Native Ad Click Type
+
+| Type of component to be tracked by GAM      |
+|---------------------------------------------|
+| `AdsterNativeAdClickComponent.body`         |
+| `AdsterNativeAdClickComponent.callToAction` |
+| `AdsterNativeAdClickComponent.headline`     |
+| `AdsterNativeAdClickComponent.logo`         |
+| `AdsterNativeAdClickComponent.ratingBar`    |
+
 ### ✅ Example Usage
 
 ```dart
 AdsterNativeAd(
   adPlacementName: "adster_native_test",
-  onAdLoaded: (value, widget) {
+  onAdLoaded: (value, widget, clickHandler) {
     return SizedBox(
       height: 200,
       child: Row(
@@ -151,33 +161,62 @@ AdsterNativeAd(
           Expanded(child: widget),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(height: 10),
                   Row(
                     children: [
                       CachedNetworkImage(
                         imageUrl: value.imageUrl ?? "",
-                        placeholder: (context, url) => CircularProgressIndicator(),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        placeholder:
+                            (context, url) =>
+                                CircularProgressIndicator(),
+                        errorWidget:
+                            (context, url, error) =>
+                                Icon(Icons.error),
                       ),
                       SizedBox(width: 10),
                       Flexible(
-                        child: Text(
-                          value.headLine ?? "",
-                          maxLines: 2,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        child: InkWell(
+                          onTap: () {
+                            clickHandler.call(
+                              AdsterNativeAdClickComponent
+                                  .headline,
+                            );
+                          },
+                          child: Text(
+                            value.headLine ?? "",
+                            maxLines: 2,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 5),
-                  Text(value.body ?? ""),
+                  InkWell(
+                    onTap: () {
+                      clickHandler.call(
+                        AdsterNativeAdClickComponent.body,
+                      );
+                    },
+                    child: Text(value.body ?? ""),
+                  ),
                   SizedBox(height: 5),
                   MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      clickHandler.call(
+                        AdsterNativeAdClickComponent
+                            .callToAction,
+                      );
+                    },
                     color: Colors.grey,
                     child: Text(value.callToAction ?? ""),
                   ),
@@ -192,10 +231,70 @@ AdsterNativeAd(
   onFailure: (AdsterAdsException error) {
     return Text(error.message ?? "");
   },
-);
+  clickCallback: getNativeAdCallback(),
+)
 ```
 
 ---
+
+## 🎨 Interstitial Ads
+
+### ✅ Example Usage
+
+```dart
+AdsterInterstitialAds() interstitialAds = AdsterInterstitialAds();
+interstitialAds.loadInterstitialAd(
+    adPlacementName: "adster_interstitial_test",
+      callback: getInterstitialAdCallback(),
+    )
+    .then((value) {
+      if (value) {
+          interstitialAds.showInterstitialAd();
+      }
+    })
+    .onError((error, stackTrace) {
+      print(error);
+});
+```
+
+---
+
+## 🎨 Rewarded Ads
+
+### ✅ Example Usage
+
+```dart
+AdsterRewardedAds rewardedAds = AdsterRewardedAds();
+rewardedAds.loadRewardedAd(adPlacementName: "adster_rewarded_test")
+  .then((value) {
+      if (value) {
+        rewardedAds.showRewardedAd();
+      }
+  })
+  .onError((error, stackTrace) {
+    print(error);
+});
+```
+
+---
+
+## 🎨 App Opened Ads
+
+### ✅ Example Usage
+
+```dart
+AdsterAppOpenedAds appOpenedAds = AdsterAppOpenedAds();
+appOpenedAds
+    .loadAd(adPlacementName: "adster_app_opened_test")
+    .then((value) {
+      ///Ad loaded and shown
+      print("onAppOpenAdLoaded");
+    })
+    .onError((error, stackTrace) {
+      ///Ad failed to load
+      print("onFailure: $error");
+  });
+```
 
 ## 🔒 License
 

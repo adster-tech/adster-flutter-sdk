@@ -1,7 +1,6 @@
 package com.adster.flutter_sdk.native_ad;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -10,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.adster.flutter_sdk.R;
@@ -26,13 +24,15 @@ public class AdsterNativeAds implements PlatformView {
     final Context context;
     private final FrameLayout container;
     final AdsterNativeAdBridge adsterNativeAdBridge;
+    private final String widgetId;
 
-    public AdsterNativeAds(Context context, AdsterNativeAdBridge adsterNativeAdBridge) {
+    public AdsterNativeAds(Context context, String widgetId, AdsterNativeAdBridge adsterNativeAdBridge) {
         this.context = context;
+        this.widgetId = widgetId;
         container = new FrameLayout(context);
         container.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
         this.adsterNativeAdBridge = adsterNativeAdBridge;
-        displayNativeAd(adsterNativeAdBridge.getNativeAd());
+        displayNativeAd(adsterNativeAdBridge.getNativeAd(widgetId));
     }
 
     private void displayNativeAd(MediationNativeAd ad) {
@@ -40,7 +40,7 @@ public class AdsterNativeAds implements PlatformView {
         MediationNativeAdView adView = new MediationNativeAdView(context);
 
         // Add this layout as a parent to your native ad layout
-        View nativeAdView = LayoutInflater.from(context).inflate(R.layout.banner_container, adView, true);
+        View nativeAdView = LayoutInflater.from(context).inflate(R.layout.native_ad_skeleton_container, adView, true);
 
         // Set native elements
         TextView title = nativeAdView.findViewById(R.id.titleTextView);
@@ -85,6 +85,7 @@ public class AdsterNativeAds implements PlatformView {
         ad.trackViews(adView, null, map);
         // Set MediationNativeAd object
         adView.setNativeAd(ad);
+        adView.setTag(widgetId);
         adsterNativeAdBridge.setMediationNativeAdView(adView);
         // Ad native ad view to container
         container.removeAllViews();
@@ -94,12 +95,11 @@ public class AdsterNativeAds implements PlatformView {
     @Nullable
     @Override
     public View getView() {
-        Log.d(this.getClass().getName(), "getView MediaView: " + adsterNativeAdBridge.getMediaView());
         return container;
     }
 
     @Override
     public void dispose() {
-
+        adsterNativeAdBridge.clearWidget(widgetId);
     }
 }

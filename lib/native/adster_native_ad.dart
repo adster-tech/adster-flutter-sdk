@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:adster_flutter_sdk/native/adster_native_callback_channel.dart';
 import 'package:adster_flutter_sdk/native/adster_mediation_native_ad_model.dart';
 import 'package:adster_flutter_sdk/native/adster_native_ad_callback.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,34 +35,27 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
   final MethodChannel _channel = MethodChannel(
     'adster.channel:adster_native_ad',
   );
-  final MethodChannel _clickChannel = MethodChannel(
-    'adster.channel:adster_native_ad_click',
-  );
+  late String widgetId;
 
   _AdsterNativeAdState();
 
   @override
   void initState() {
     super.initState();
+    widgetId = UniqueKey().toString();
     _loadAdFuture = _loadAd();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _clickChannel.setMethodCallHandler((call) async {
-        switch (call.method) {
-          case 'onAdClicked':
+      AdsterNativeCallbackChannel.instance.registerWidget(
+        widgetId,
+        AdsterNativeAdCallback(
+          onAdClicked: () {
             widget.clickCallback?.onAdClicked?.call();
-            break;
-          case 'onAdImpression':
+          },
+          onAdImpression: () {
             widget.clickCallback?.onAdImpression?.call();
-            break;
-          case 'onFailure':
-            widget.clickCallback?.onFailure?.call();
-            break;
-          case 'onNativeAdLoaded':
-            widget.clickCallback?.onNativeAdLoaded?.call();
-            break;
-        }
-        return null;
-      });
+          },
+        ),
+      );
     });
   }
 
@@ -95,10 +89,10 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
                   _getPlatformWidget(),
                   (clickComponentType) {
                     _channel
-                        .invokeMethod(
-                          "nativeMediaClick",
-                          clickComponentType.name.toString(),
-                        )
+                        .invokeMethod("nativeMediaClick", {
+                          "componentName": clickComponentType.name.toString(),
+                          "widgetId": widgetId,
+                        })
                         .then((value) {
                           log(value);
                         });
@@ -131,6 +125,7 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
   Future<dynamic> _loadAd() async {
     dynamic data = await _channel.invokeMethod('loadBanner', {
       'adPlacementName': widget.adPlacementName,
+      'widgetId': widgetId,
     });
     log(data);
     return data;
@@ -141,6 +136,8 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
       case TargetPlatform.android:
         return AndroidView(
           viewType: 'adster_native',
+          creationParams: {"widgetId": widgetId},
+          creationParamsCodec: StandardMessageCodec(),
           onPlatformViewCreated: (id) {
             log("onPlatformViewCreated: adster_native");
           },
@@ -157,6 +154,6 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
   @override
   void dispose() {
     super.dispose();
-    _clickChannel.setMethodCallHandler(null);
+    AdsterNativeCallbackChannel.instance.removeWidget(widgetId);
   }
 }

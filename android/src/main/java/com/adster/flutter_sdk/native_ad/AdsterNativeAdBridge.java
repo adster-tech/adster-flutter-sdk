@@ -14,8 +14,12 @@ import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationNativeAd;
 import com.adster.sdk.mediation.MediationNativeAdView;
+import com.google.android.gms.ads.nativead.NativeAdView;
 
 import org.json.JSONException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -25,10 +29,9 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
 
     final private MethodChannel methodChannel;
     final private Context context;
-    private View mediaView = null;
     final private MethodChannel clickMethodChannel;
-    private MediationNativeAd nativeAd;
-    private MediationNativeAdView mediationNativeAdView;
+    private final Map<String, MediationNativeAd> nativeAds = new HashMap<>();
+    private final Map<String, MediationNativeAdView> mediationNativeAdViews = new HashMap<>();
 
     public AdsterNativeAdBridge(BinaryMessenger messenger, Context context) {
         this.methodChannel = new MethodChannel(messenger, "adster.channel:adster_native_ad");
@@ -41,65 +44,72 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         if (call.method.equals("loadBanner")) {
             String adPlacementName = call.argument("adPlacementName");
-            if (!TextUtils.isEmpty(adPlacementName)) {
+            String widgetId = call.argument("widgetId");
+            if (adPlacementName != null && widgetId != null) {
                 AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, adPlacementName).build();
-                AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
+                AdSterAdLoader.Companion.builder().withAdsListener(new AdsterNativeMediationAdListener(widgetId) {
                     @Override
-                    public void onNativeAdLoaded(@NonNull MediationNativeAd ad) {
-                        super.onNativeAdLoaded(ad);
-                        nativeAd = ad;
-                        mediaView = ad.getMediaView();
+                    public void onNativeAdLoaded(@NonNull MediationNativeAd ad, @NonNull String widgetId) {
+                        nativeAds.put(widgetId, ad);
                         try {
                             String data = new AdsterJSONDataMapper().toJSONStr(ad);
                             result.success(data);
-                            clickMethodChannel.invokeMethod("onNativeAdLoaded", null);
                         } catch (JSONException e) {
                             result.error("DATA_PARSE_ERROR", e.getMessage(), null);
                         }
                     }
 
                     @Override
-                    public void onFailure(@NonNull AdError adError) {
+                    public void onFailure(@NonNull AdError adError, @NonNull String widgetId) {
                         //Handle failure callback here
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
-                        clickMethodChannel.invokeMethod("onFailure", adError.getErrorMessage());
                     }
-                }).withAdsEventsListener(new AdEventsListener() {
+                }).withAdsEventsListener(new AdsterNativeEventAdListener(widgetId) {
+
                     @Override
-                    public void onAdClicked() {
-                        clickMethodChannel.invokeMethod("onAdClicked", null);
+                    public void onAdClicked(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdClicked", getWidgetIdJSON(widgetId));
                     }
 
                     @Override
-                    public void onAdImpression() {
-                        clickMethodChannel.invokeMethod("onAdImpression", null);
+                    public void onAdImpression(@NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdImpression", getWidgetIdJSON(widgetId));
                     }
                 }).build().loadAd(configuration);
             } else {
                 result.error("EMP_PLACEMENT_ID", "Placement id were not supplied", null);
             }
         } else if (call.method.equals("nativeMediaClick")) {
-            if (mediationNativeAdView != null) {
-                if (call.arguments.equals("body")) {
-                    if (clickSense()) {
-                        mediationNativeAdView.onClick(mediationNativeAdView.getBodyView());
-                    }
-                } else if (call.arguments.equals("callToAction")) {
-                    if (clickSense()) {
-                        mediationNativeAdView.performClick();
-                    }
-                } else if (call.arguments.equals("headline")) {
-                    if (clickSense()) {
-                        mediationNativeAdView.onClick(mediationNativeAdView.getHeadlineView());
-                    }
-                } else if (call.arguments.equals("logo")) {
-                    if (clickSense()) {
-                        mediationNativeAdView.onClick(mediationNativeAdView.getLogoView());
-                    }
-                } else if (call.arguments.equals("ratingBar")) {
-                    if (clickSense()) {
-                        mediationNativeAdView.onClick(mediationNativeAdView.getRatingBarView());
-                    }
+            String widgetId = call.argument("widgetId");
+            String componentName = call.argument("componentName");
+            MediationNativeAdView mediationNativeAdView = mediationNativeAdViews.get(widgetId);
+            if (componentName != null && widgetId != null && mediationNativeAdView != null) {
+                switch (componentName) {
+                    case "body":
+                        if (clickSense(widgetId)) {
+                            mediationNativeAdView.onClick(mediationNativeAdView.getBodyView());
+                        }
+                        break;
+                    case "callToAction":
+                        if (clickSense(widgetId)) {
+                            mediationNativeAdView.onClick(mediationNativeAdView.getCtaView());
+                        }
+                        break;
+                    case "headline":
+                        if (clickSense(widgetId)) {
+                            mediationNativeAdView.onClick(mediationNativeAdView.getHeadlineView());
+                        }
+                        break;
+                    case "logo":
+                        if (clickSense(widgetId)) {
+                            mediationNativeAdView.onClick(mediationNativeAdView.getLogoView());
+                        }
+                        break;
+                    case "ratingBar":
+                        if (clickSense(widgetId)) {
+                            mediationNativeAdView.onClick(mediationNativeAdView.getRatingBarView());
+                        }
+                        break;
                 }
                 result.success("");
             } else {
@@ -110,29 +120,41 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
         }
     }
 
-    private boolean clickSense() {
-        if (TextUtils.isEmpty(nativeAd.getLandingUrl())) {
-            if (mediaView != null) {
-                mediaView.performClick();
+    Map<String, String> getWidgetIdJSON(String widgetId) {
+        Map<String, String> data = new HashMap<>();
+        data.put("widgetId", widgetId);
+        return data;
+    }
+
+    private boolean clickSense(String widgetId) {
+        MediationNativeAd nativeAd = nativeAds.get(widgetId);
+        if (nativeAd != null) {
+            if (TextUtils.isEmpty(nativeAd.getLandingUrl())) {
+                if (nativeAd.getMediaView() != null) {
+                    nativeAd.getMediaView().performClick();
+                }
+                return false;
             }
+        } else {
             return false;
         }
         return true;
-    }
-
-    View getMediaView() {
-        return mediaView;
     }
 
     public void dispose() {
         methodChannel.setMethodCallHandler(null);
     }
 
-    public MediationNativeAd getNativeAd() {
-        return nativeAd;
+    public MediationNativeAd getNativeAd(String widgetId) {
+        return nativeAds.get(widgetId);
     }
 
     public void setMediationNativeAdView(MediationNativeAdView mediationNativeAdView) {
-        this.mediationNativeAdView = mediationNativeAdView;
+        mediationNativeAdViews.put(mediationNativeAdView.getTag().toString(), mediationNativeAdView);
+    }
+
+    public void clearWidget(String widgetId) {
+        nativeAds.remove(widgetId);
+        mediationNativeAdViews.remove(widgetId);
     }
 }

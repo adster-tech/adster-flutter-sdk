@@ -1,21 +1,19 @@
-package com.adster.flutter_sdk.interstitial_ad;
+package com.adster.flutter_sdk.app_opened_ad;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
-import com.adster.sdk.mediation.InterstitialAdEventsListener;
 import com.adster.sdk.mediation.MediationAdListener;
-import com.adster.sdk.mediation.MediationInterstitialAd;
+import com.adster.sdk.mediation.MediationAppOpenAd;
 import com.adster.sdk.mediation.MediationRewardedAd;
 import com.adster.sdk.mediation.Reward;
-import com.adster.sdk.mediation.RewardedAdEventsListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,17 +22,16 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class AdsterInterstitialAdBridge implements MethodChannel.MethodCallHandler {
+public class AdsterAppOpenedAdBridge implements MethodChannel.MethodCallHandler {
 
     final private MethodChannel methodChannel;
+    final private MethodChannel clickMethodChannel;
     private Activity activity;
     final private Context context;
-    private MediationInterstitialAd mediationInterstitialAd;
-    final private MethodChannel clickMethodChannel;
 
-    public AdsterInterstitialAdBridge(BinaryMessenger messenger, Context context) {
-        this.methodChannel = new MethodChannel(messenger, "adster.channel:adster_interstitial_ad");
-        this.clickMethodChannel = new MethodChannel(messenger, "adster.channel:adster_interstitial_ad_click");
+    public AdsterAppOpenedAdBridge(BinaryMessenger messenger, Context context) {
+        this.methodChannel = new MethodChannel(messenger, "adster.channel:adster_app_opened_ad");
+        this.clickMethodChannel = new MethodChannel(messenger, "adster.channel:adster_app_opened_ad_click");
         this.methodChannel.setMethodCallHandler(this);
         this.context = context;
     }
@@ -45,26 +42,32 @@ public class AdsterInterstitialAdBridge implements MethodChannel.MethodCallHandl
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        if (call.method.equals("loadInterstitialAd")) {
+        if (call.method.equals("loadAppOpenedAd")) {
             String adPlacementName = call.argument("adPlacementName");
             String widgetId = call.argument("widgetId");
-            Log.d("AdsterInterstitialAd", "loadInterstitialAd: " + adPlacementName + " widgetId: " + widgetId);
+            Log.d("AdsterAppOpenedAd", "loadAppOpenedAd: " + adPlacementName + " widgetId: " + widgetId);
             if (adPlacementName != null && widgetId != null) {
                 AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, adPlacementName).build();
-
                 AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
+
                     @Override
-                    public void onInterstitialAdLoaded(@NonNull MediationInterstitialAd ad) {
-                        super.onInterstitialAdLoaded(ad);
-                        mediationInterstitialAd = ad;
-                        result.success("");
+                    public void onAppOpenAdLoaded(@NonNull MediationAppOpenAd ad) {
+                        super.onAppOpenAdLoaded(ad);
+                        if (activity != null) {
+                            ad.showAd(activity);
+                            result.success("");
+                        } else {
+                            result.error("ACTIVITY_NOT_FOUND", "Activity not found", null);
+                        }
                     }
 
                     @Override
                     public void onFailure(@NonNull AdError adError) {
+                        //Handle failure callback here
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
                     }
-                }).withInterstitialAdEventsListener(new AdsterInterstitialEventAdListener(widgetId) {
+                }).withAppOpenAdEventsListener(new AdsterAppOpenedEventAdListener(widgetId) {
+
                     @Override
                     public void onAdClicked(@NonNull String widgetId) {
                         clickMethodChannel.invokeMethod("onAdClicked", getWidgetIdJSON(widgetId));
@@ -84,16 +87,21 @@ public class AdsterInterstitialAdBridge implements MethodChannel.MethodCallHandl
                     public void onAdClosed(@NonNull String widgetId) {
                         clickMethodChannel.invokeMethod("onAdClosed", getWidgetIdJSON(widgetId));
                     }
+
+                    @Override
+                    public void onFailure(@Nullable AdError adError, @NonNull String widgetId) {
+                        Map<String, String> widgetIdJSON = getWidgetIdJSON(widgetId);
+                        Map<String, Object> errorData = new HashMap<>(widgetIdJSON);
+                        if (adError != null) {
+                            errorData.put("errorCode", adError.getErrorCode());
+                            errorData.put("errorMessage", adError.getErrorMessage());
+                        }
+                        clickMethodChannel.invokeMethod("onFailure", errorData);
+                    }
+
                 }).build().loadAd(configuration);
             } else {
                 result.error("EMP_PLACEMENT_ID", "Placement id were not supplied", null);
-            }
-        } else if (call.method.equals("showAd")) {
-            if (mediationInterstitialAd != null && activity != null) {
-                mediationInterstitialAd.showAd(activity);
-                result.success("");
-            } else {
-                result.error("REWARDED_AD_NOT_LOADED", "Rewarded ad not loaded: mediationInterstitialAd=" + mediationInterstitialAd + " activity:" + activity, null);
             }
         } else {
             result.notImplemented();

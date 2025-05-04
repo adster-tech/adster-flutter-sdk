@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.adster.flutter_sdk.app_opened_ad.AdsterAppOpenedAdBridge;
 import com.adster.flutter_sdk.banner.AdsterBannerAdBridge;
 import com.adster.flutter_sdk.banner.AdsterBannerAdViewFactory;
 import com.adster.flutter_sdk.interstitial_ad.AdsterInterstitialAdBridge;
@@ -16,6 +17,8 @@ import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSter;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.RequestConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +38,7 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
     private AdsterRewardedAdBridge adsterRewardedAdBridge;
     private AdsterInterstitialAdBridge adsterInterstitialAdBridge;
     private AdsterBannerAdBridge adsterBannerAdBridge;
+    private AdsterAppOpenedAdBridge adsterAppOpenedAdBridge;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -46,11 +50,11 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
             Log.d("AdsterSDKPlugin", "AdapterStatus: " + AdapterStatus);
         });
 
-        /*For testing purposes only*/
-        /*List<String> testDeviceIds = Arrays.asList("B483487FE7D832D226373700DF3E654C");
+        //For testing purposes only
+        List<String> testDeviceIds = List.of("B483487FE7D832D226373700DF3E654C");
         RequestConfiguration configuration =
                 new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-        MobileAds.setRequestConfiguration(configuration);*/
+        MobileAds.setRequestConfiguration(configuration);
 
         adsterBannerAdBridge = new AdsterBannerAdBridge(flutterPluginBinding.getBinaryMessenger(), context);
 
@@ -72,6 +76,9 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
 
         /*Initialize interstitial ad bridge*/
         adsterInterstitialAdBridge = new AdsterInterstitialAdBridge(flutterPluginBinding.getBinaryMessenger(), flutterPluginBinding.getApplicationContext());
+
+        /*Initialize app opened ad bridge*/
+        adsterAppOpenedAdBridge = new AdsterAppOpenedAdBridge(flutterPluginBinding.getBinaryMessenger(), flutterPluginBinding.getApplicationContext());
     }
 
 
@@ -89,6 +96,9 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         if (adsterInterstitialAdBridge != null) {
             adsterInterstitialAdBridge.dispose();
         }
+        if (adsterAppOpenedAdBridge != null) {
+            adsterAppOpenedAdBridge.dispose();
+        }
     }
 
     @Override
@@ -98,6 +108,9 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         }
         if (adsterInterstitialAdBridge != null) {
             adsterInterstitialAdBridge.setActivity(binding.getActivity());
+        }
+        if (adsterAppOpenedAdBridge != null) {
+            adsterAppOpenedAdBridge.setActivity(binding.getActivity());
         }
     }
 
@@ -114,6 +127,9 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         if (adsterInterstitialAdBridge != null) {
             adsterInterstitialAdBridge.setActivity(binding.getActivity());
         }
+        if (adsterAppOpenedAdBridge != null) {
+            adsterAppOpenedAdBridge.setActivity(binding.getActivity());
+        }
     }
 
     @Override
@@ -123,6 +139,9 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         }
         if (adsterInterstitialAdBridge != null) {
             adsterInterstitialAdBridge.setActivity(null);
+        }
+        if (adsterAppOpenedAdBridge != null) {
+            adsterAppOpenedAdBridge.setActivity(null);
         }
     }
 }
