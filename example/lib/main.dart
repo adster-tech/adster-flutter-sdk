@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       appOpenedAds
           .loadAd(
-            adPlacementName: "adster_app_opened_test",
+            adPlacementName: "adster_appopen_test",
             callback: getAppOpenedAdCallback(),
           )
           .then((value) {

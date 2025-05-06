@@ -6,6 +6,7 @@ This Flutter project demonstrates the integration of the `adster_flutter_sdk` fo
 - Native Ads
 - Interstitial Ads
 - Rewarded Ads
+- App open (Beta)
 
 ---
 
