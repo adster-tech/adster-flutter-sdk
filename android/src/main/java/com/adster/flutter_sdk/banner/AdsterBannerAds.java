@@ -28,6 +28,7 @@ public class AdsterBannerAds implements PlatformView {
     public AdsterBannerAds(Context context, AdsterBannerAdBridge adsterBannerAdBridge) {
         this.context = context;
         container = new FrameLayout(context);
+        container.removeAllViews();
         container.addView(adsterBannerAdBridge.getMediaView());
     }
 

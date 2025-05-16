@@ -1,6 +1,6 @@
 name: adster_flutter_sdk
 description: "SDK for flutter consumers"
-version: 1.0.4
+version: 1.0.5
 homepage: https://github.com/adster-tech/adster-flutter-sdk
 
 environment:
