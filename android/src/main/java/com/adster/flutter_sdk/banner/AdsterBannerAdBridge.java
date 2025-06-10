@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
@@ -19,7 +20,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class AdsterBannerAdBridge implements MethodChannel.MethodCallHandler {
+public class AdsterBannerAdBridge extends AdsterBaseAdBridge {
 
     final private MethodChannel methodChannel;
     final private MethodChannel clickMethodChannel;
@@ -77,7 +78,8 @@ public class AdsterBannerAdBridge implements MethodChannel.MethodCallHandler {
         return data;
     }
 
-    View getMediaView() {
+    @Override
+    public View getMediaView() {
         return mediaView;
     }
 

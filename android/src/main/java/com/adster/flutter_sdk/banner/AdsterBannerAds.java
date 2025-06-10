@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
@@ -25,7 +26,7 @@ public class AdsterBannerAds implements PlatformView {
     final Context context;
     final FrameLayout container;
 
-    public AdsterBannerAds(Context context, AdsterBannerAdBridge adsterBannerAdBridge) {
+    public AdsterBannerAds(Context context, AdsterBaseAdBridge adsterBannerAdBridge) {
         this.context = context;
         container = new FrameLayout(context);
         container.removeAllViews();

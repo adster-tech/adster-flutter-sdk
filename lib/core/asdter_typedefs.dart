@@ -15,6 +15,9 @@ typedef AdsterAdErrorBuilder = Widget Function(AdsterAdsException error);
 typedef AdsterClickHandler =
     void Function(AdsterNativeAdClickComponent clickComponentType);
 
+typedef AdsterUnifiedAdBuilder =
+    Widget Function(AdsterBannerAdBuilder, AdsterNativeAdBuilder);
+
 class AdsterAdsException implements Exception {
   /// An error code.
   final String code;

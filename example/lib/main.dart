@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
       callback: getInterstitialAdCallback(),
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    /*WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       appOpenedAds
           .loadAd(
             adPlacementName: "adster_appopen_test",
@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
               title: Text("AppOpenedAd:onFailure: $error"),
             );
           });
-    });
+    });*/
   }
 
   @override
@@ -77,65 +77,227 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: AppBar(title: const Text('Plugin example app')),
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AdsterBannerAd(
-                key: UniqueKey(),
-                adPlacementName: "adster_banner_300x250",
-                clickCallback: getBannerAdCallback(
-                  AdsterAdSize.medium.toString(),
-                ),
-                adSize: AdsterAdSize.medium,
-                loadingWidget: SizedBox(
-                  width: AdsterAdSize.medium.width,
-                  height: AdsterAdSize.medium.height,
-                  child: Card(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 10),
-                        Text("Loading...."),
-                      ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Banner (320x250)"),
+                AdsterBannerAd(
+                  key: UniqueKey(),
+                  adPlacementName: "adster_banner_300x250",
+                  clickCallback: getBannerAdCallback(
+                    AdsterAdSize.medium.toString(),
+                  ),
+                  adSize: AdsterAdSize.medium,
+                  loadingWidget: SizedBox(
+                    width: AdsterAdSize.medium.width,
+                    height: AdsterAdSize.medium.height,
+                    child: Card(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 10),
+                          Text("Loading...."),
+                        ],
+                      ),
                     ),
                   ),
+                  onFailure: (AdsterAdsException error) {
+                    return Text("Banner not loaded: ${error.message}");
+                  },
                 ),
-                onFailure: (AdsterAdsException error) {
-                  return Text("Banner not loaded: ${error.message}");
-                },
-              ),
-              SizedBox(height: 10),
-              AdsterBannerAd(
-                key: UniqueKey(),
-                adPlacementName: "adster_banner_320x50",
-                clickCallback: getBannerAdCallback(
-                  AdsterAdSize.small.toString(),
-                ),
-                adSize: AdsterAdSize.small,
-                loadingWidget: SizedBox(
-                  width: AdsterAdSize.small.width,
-                  height: AdsterAdSize.small.height,
-                  child: Card(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(width: 10),
-                        Text("Loading...."),
-                      ],
+                SizedBox(height: 20),
+                Text("Banner (300x50)"),
+                AdsterBannerAd(
+                  key: UniqueKey(),
+                  adPlacementName: "adster_banner_320x50",
+                  clickCallback: getBannerAdCallback(
+                    AdsterAdSize.small.toString(),
+                  ),
+                  adSize: AdsterAdSize.small,
+                  loadingWidget: SizedBox(
+                    width: AdsterAdSize.small.width,
+                    height: AdsterAdSize.small.height,
+                    child: Card(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(width: 10),
+                          Text("Loading...."),
+                        ],
+                      ),
                     ),
                   ),
+                  onFailure: (AdsterAdsException error) {
+                    return Text("Banner not loaded: ${error.message}");
+                  },
                 ),
-                onFailure: (AdsterAdsException error) {
-                  return Text("Banner not loaded: ${error.message}");
-                },
-              ),
-              Card(
-                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                child: AdsterNativeAd(
-                  adPlacementName: "adster_native_test",
-                  onAdLoaded: (value, widget, clickHandler) {
+                SizedBox(height: 20),
+                Text("Native"),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  child: AdsterNativeAd(
+                    adPlacementName: "adster_native_test",
+                    onAdLoaded: (value, widget, clickHandler) {
+                      return SizedBox(
+                        height: 200,
+                        child: Row(
+                          children: [
+                            SizedBox(width: 10),
+                            Expanded(child: widget),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        CachedNetworkImage(
+                                          imageUrl: value.imageUrl ?? "",
+                                          placeholder:
+                                              (context, url) =>
+                                                  CircularProgressIndicator(),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                                  Icon(Icons.error),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Flexible(
+                                          child: InkWell(
+                                            onTap: () {
+                                              clickHandler.call(
+                                                AdsterNativeAdClickComponent
+                                                    .headline,
+                                              );
+                                            },
+                                            child: Text(
+                                              value.headLine ?? "",
+                                              maxLines: 2,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 5),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          clickHandler.call(
+                                            AdsterNativeAdClickComponent.body,
+                                          );
+                                        },
+                                        child: Text(
+                                          value.body ?? "",
+                                          overflow: TextOverflow.clip,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    MaterialButton(
+                                      onPressed: () {
+                                        clickHandler.call(
+                                          AdsterNativeAdClickComponent
+                                              .callToAction,
+                                        );
+                                      },
+                                      color: Colors.grey,
+                                      child: Text(value.callToAction ?? ""),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    onFailure: (AdsterAdsException error) {
+                      return Text(error.message ?? "");
+                    },
+                    clickCallback: getNativeAdCallback(),
+                  ),
+                ),
+                SizedBox(height: 10),
+                FutureBuilder(
+                  future: rewardAdFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          rewardedAds.showRewardedAd();
+                          rewardedAds.reloadAd();
+                        },
+                        child: Text("Show Rewarded Ad"),
+                      );
+                    } else if (snapshot.hasError) {
+                      if (snapshot.error is Exception) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Rewarded Ads not loaded: ${(snapshot.error as PlatformException).message}",
+                          ),
+                        );
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("${snapshot.error}"),
+                      );
+                    }
+                    return CircularProgressIndicator();
+                  },
+                ),
+                SizedBox(height: 5),
+                FutureBuilder(
+                  future: interstitialAdFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          interstitialAds.showInterstitialAd();
+                          interstitialAds.reloadAd();
+                        },
+                        child: Text("Show Interstitial Ad"),
+                      );
+                    } else if (snapshot.hasError) {
+                      if (snapshot.error is Exception) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Interstitial Ads not loaded: ${(snapshot.error as PlatformException).message}",
+                          ),
+                        );
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("${snapshot.error}"),
+                      );
+                    }
+                    return CircularProgressIndicator();
+                  },
+                ),
+                SizedBox(height: 20),
+                Text("Unified"),
+                AdsterUnifiedAd(
+                  adPlacementName: "adster_unified_test",
+                  bannerAdSize: AdsterAdSize.medium,
+                  bannerClickCallback: getUnifiedBannerAdCallback(
+                    AdsterAdSize.medium.toString(),
+                  ),
+                  nativeClickCallback: getUnifiedNativeAdCallback(),
+                  onBannerAdLoaded: (bannerView) {
+                    return bannerView;
+                  },
+                  onNativeAdLoaded: (value, nativeMediaView, clickHandler) {
                     return SizedBox(
                       height: 200,
                       child: Row(
@@ -184,13 +346,18 @@ class _MyAppState extends State<MyApp> {
                                     ],
                                   ),
                                   SizedBox(height: 5),
-                                  InkWell(
-                                    onTap: () {
-                                      clickHandler.call(
-                                        AdsterNativeAdClickComponent.body,
-                                      );
-                                    },
-                                    child: Text(value.body ?? ""),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () {
+                                        clickHandler.call(
+                                          AdsterNativeAdClickComponent.body,
+                                        );
+                                      },
+                                      child: Text(
+                                        value.body ?? "",
+                                        overflow: TextOverflow.clip,
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(height: 5),
                                   MaterialButton(
@@ -211,70 +378,15 @@ class _MyAppState extends State<MyApp> {
                       ),
                     );
                   },
-                  onFailure: (AdsterAdsException error) {
-                    return Text(error.message ?? "");
+                  onFailure: (error) {
+                    return Text(
+                      "Banner not loaded: ${error.message} (${error.code})",
+                    );
                   },
-                  clickCallback: getNativeAdCallback(),
                 ),
-              ),
-              FutureBuilder(
-                future: rewardAdFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        rewardedAds.showRewardedAd();
-                        rewardedAds.reloadAd();
-                      },
-                      child: Text("Show Rewarded Ad"),
-                    );
-                  } else if (snapshot.hasError) {
-                    if (snapshot.error is Exception) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Rewarded Ads not loaded: ${(snapshot.error as PlatformException).message}",
-                        ),
-                      );
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("${snapshot.error}"),
-                    );
-                  }
-                  return CircularProgressIndicator();
-                },
-              ),
-              SizedBox(height: 5),
-              FutureBuilder(
-                future: interstitialAdFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        interstitialAds.showInterstitialAd();
-                        interstitialAds.reloadAd();
-                      },
-                      child: Text("Show Interstitial Ad"),
-                    );
-                  } else if (snapshot.hasError) {
-                    if (snapshot.error is Exception) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Interstitial Ads not loaded: ${(snapshot.error as PlatformException).message}",
-                        ),
-                      );
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("${snapshot.error}"),
-                    );
-                  }
-                  return CircularProgressIndicator();
-                },
-              ),
-            ],
+                SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -292,6 +404,17 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  AdsterBannerAdCallback getUnifiedBannerAdCallback(String bannerSize) {
+    return AdsterBannerAdCallback(
+      onAdClicked: () {
+        notifySuccess(title: "UnifiedBannerAd($bannerSize):onAdClicked");
+      },
+      onAdImpression: () {
+        notifySuccess(title: "UnifiedBannerAd($bannerSize):onAdImpression");
+      },
+    );
+  }
+
   AdsterNativeAdCallback getNativeAdCallback() {
     return AdsterNativeAdCallback(
       onAdClicked: () {
@@ -299,6 +422,17 @@ class _MyAppState extends State<MyApp> {
       },
       onAdImpression: () {
         notifySuccess(title: "NativeAd:onAdImpression");
+      },
+    );
+  }
+
+  AdsterNativeAdCallback getUnifiedNativeAdCallback() {
+    return AdsterNativeAdCallback(
+      onAdClicked: () {
+        notifySuccess(title: "UnifiedNativeAd:onAdClicked");
+      },
+      onAdImpression: () {
+        notifySuccess(title: "UnifiedNativeAd:onAdImpression");
       },
     );
   }

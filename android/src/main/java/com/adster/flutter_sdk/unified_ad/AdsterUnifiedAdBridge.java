@@ -1,7 +1,8 @@
-package com.adster.flutter_sdk.native_ad;
+package com.adster.flutter_sdk.unified_ad;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -9,13 +10,12 @@ import androidx.annotation.NonNull;
 import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
 import com.adster.flutter_sdk.core.AdsterJSONDataMapper;
 import com.adster.sdk.mediation.AdError;
-import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
-import com.adster.sdk.mediation.MediationAdListener;
+import com.adster.sdk.mediation.MediationBannerAd;
 import com.adster.sdk.mediation.MediationNativeAd;
 import com.adster.sdk.mediation.MediationNativeAdView;
-import com.google.android.gms.ads.nativead.NativeAdView;
+import com.adster.sdk.mediation.MediationNativeCustomFormatAd;
 
 import org.json.JSONException;
 
@@ -26,29 +26,38 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class AdsterNativeAdBridge extends AdsterBaseAdBridge {
+public class AdsterUnifiedAdBridge extends AdsterBaseAdBridge {
 
     final private MethodChannel methodChannel;
-    final private Context context;
     final private MethodChannel clickMethodChannel;
+    final private Context context;
+    private View mediaView = null;
     private final Map<String, MediationNativeAd> nativeAds = new HashMap<>();
     private final Map<String, MediationNativeAdView> mediationNativeAdViews = new HashMap<>();
 
-    public AdsterNativeAdBridge(BinaryMessenger messenger, Context context) {
-        this.methodChannel = new MethodChannel(messenger, "adster.channel:adster_native_ad");
-        this.clickMethodChannel = new MethodChannel(messenger, "adster.channel:adster_native_ad_click");
-        this.methodChannel.setMethodCallHandler(this);
+    public AdsterUnifiedAdBridge(BinaryMessenger messenger, Context context) {
+        methodChannel = new MethodChannel(messenger, "adster.channel:adster_unified");
+        clickMethodChannel = new MethodChannel(messenger, "adster.channel:adster_unified_ad_click");
+        methodChannel.setMethodCallHandler(this);
         this.context = context;
     }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        if (call.method.equals("loadBanner")) {
-            String adPlacementName = call.argument("adPlacementName");
+        Log.d("AdsterUnifiedAds", "onMethodCall: " + call.method);
+        if (call.method.equals("loadUnified")) {
+            String placementId = call.argument("adPlacementName");
             String widgetId = call.argument("widgetId");
-            if (adPlacementName != null && widgetId != null) {
-                AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, adPlacementName).build();
-                AdSterAdLoader.Companion.builder().withAdsListener(new AdsterNativeMediationAdListener(widgetId) {
+            Log.d("AdsterUnifiedAds", "loadUnified: " + placementId + " widgetId: " + widgetId);
+            if (placementId != null && widgetId != null) {
+                AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, placementId).build();
+                AdSterAdLoader.Companion.builder().withAdsListener(new AdsterUnifiedMediationAdListener(widgetId) {
+                    @Override
+                    public void onBannerAdLoaded(@NonNull MediationBannerAd mediationBannerAd, @NonNull String widgetId) {
+                        mediaView = mediationBannerAd.getView();
+                        result.success("true");
+                    }
+
                     @Override
                     public void onNativeAdLoaded(@NonNull MediationNativeAd ad, @NonNull String widgetId) {
                         nativeAds.put(widgetId, ad);
@@ -61,12 +70,15 @@ public class AdsterNativeAdBridge extends AdsterBaseAdBridge {
                     }
 
                     @Override
-                    public void onFailure(@NonNull AdError adError, @NonNull String widgetId) {
-                        //Handle failure callback here
+                    public void onNativeCustomFormatAdLoaded(@NonNull MediationNativeCustomFormatAd mediationNativeCustomFormatAd, @NonNull String widgetId) {
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull String widgetId, @NonNull AdError adError) {
                         result.error(String.valueOf(adError.getErrorCode()), adError.getErrorMessage(), null);
                     }
-                }).withAdsEventsListener(new AdsterNativeEventAdListener(widgetId) {
-
+                }).withAdsEventsListener(new AdsterUnifiedEventAdListener(widgetId) {
                     @Override
                     public void onAdClicked(@NonNull String widgetId) {
                         clickMethodChannel.invokeMethod("onAdClicked", getWidgetIdJSON(widgetId));
@@ -121,12 +133,6 @@ public class AdsterNativeAdBridge extends AdsterBaseAdBridge {
         }
     }
 
-    Map<String, String> getWidgetIdJSON(String widgetId) {
-        Map<String, String> data = new HashMap<>();
-        data.put("widgetId", widgetId);
-        return data;
-    }
-
     private boolean clickSense(String widgetId) {
         MediationNativeAd nativeAd = nativeAds.get(widgetId);
         if (nativeAd != null) {
@@ -142,8 +148,15 @@ public class AdsterNativeAdBridge extends AdsterBaseAdBridge {
         return true;
     }
 
-    public void dispose() {
-        methodChannel.setMethodCallHandler(null);
+    Map<String, String> getWidgetIdJSON(String widgetId) {
+        Map<String, String> data = new HashMap<>();
+        data.put("widgetId", widgetId);
+        return data;
+    }
+
+    @Override
+    public View getMediaView() {
+        return mediaView;
     }
 
     @Override
@@ -160,5 +173,9 @@ public class AdsterNativeAdBridge extends AdsterBaseAdBridge {
     public void clearWidget(String widgetId) {
         nativeAds.remove(widgetId);
         mediationNativeAdViews.remove(widgetId);
+    }
+
+    public void dispose() {
+        methodChannel.setMethodCallHandler(null);
     }
 }
