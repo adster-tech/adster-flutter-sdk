@@ -10,3 +10,6 @@
 ## 1.0.3
 - repo endpoint changed for Android
 - Firebase missing messagingSenderId issue fixed
+
+## 1.0.6
+- Added support for play services ads 24.3.0
