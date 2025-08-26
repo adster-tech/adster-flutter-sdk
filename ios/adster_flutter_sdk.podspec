@@ -3,7 +3,7 @@
 # Run `pod lib lint flutter_sdk.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'flutter_sdk'
+  s.name             = 'adster_flutter_sdk'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter project.'
   s.description      = <<-DESC
@@ -15,6 +15,8 @@ A new Flutter project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
+  s.dependency 'Adster', '~> 1.2.3'
+  s.dependency 'Realm', '~> 20.0'
   s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.

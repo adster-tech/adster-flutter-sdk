@@ -43,7 +43,7 @@ public class AdsterNativeAdBridge extends AdsterBaseAdBridge {
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        if (call.method.equals("loadBanner")) {
+        if (call.method.equals("loadNativeAd")) {
             String adPlacementName = call.argument("adPlacementName");
             String widgetId = call.argument("widgetId");
             if (adPlacementName != null && widgetId != null) {

@@ -51,6 +51,18 @@ class AdsterInterstitialAdCallbackChannel {
           _widgetMapper[widgetId]?.onAdClosed.call();
         }
         break;
+      case 'onAdFailToPresentFullScreenContentWithError':
+        if ((widgetId ?? "").isNotEmpty &&
+            _widgetMapper.containsKey(widgetId)) {
+          _widgetMapper[widgetId]?.onAdFailToPresentFullScreenContentWithError
+              ?.call(
+                AdsterAdsException(
+                  code: call.arguments["code"] ?? "UNKNOWN",
+                  message: call.arguments["message"],
+                ),
+              );
+        }
+        break;
     }
   }
 }

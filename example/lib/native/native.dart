@@ -40,6 +40,8 @@ class NativeWidget extends GetView<NativeController> {
                                   children: [
                                     CachedNetworkImage(
                                       imageUrl: value.imageUrl ?? "",
+                                      height: 30,
+                                      width: 30,
                                       placeholder:
                                           (context, url) =>
                                               CircularProgressIndicator(),

@@ -28,6 +28,7 @@ class AdsterUnifiedCallbackChannel {
 
   Future<void> setMethodCallHandler(MethodCall call) async {
     String? widgetId = call.arguments["widgetId"];
+    String? type = call.arguments["type"];
     switch (call.method) {
       case 'onAdClicked':
         if ((widgetId ?? "").isNotEmpty &&

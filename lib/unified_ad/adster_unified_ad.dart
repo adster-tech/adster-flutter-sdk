@@ -18,8 +18,7 @@ class AdsterUnifiedAd extends StatefulWidget {
   final AdsterNativeAdBuilder onNativeAdLoaded;
   final AdsterAdErrorBuilder onFailure;
   final Widget? loadingWidget;
-  final AdsterBannerAdCallback? bannerClickCallback;
-  final AdsterNativeAdCallback? nativeClickCallback;
+  final AdsterBannerAdCallback? unifiedAdClickCallback;
 
   const AdsterUnifiedAd({
     super.key,
@@ -29,8 +28,7 @@ class AdsterUnifiedAd extends StatefulWidget {
     required this.onNativeAdLoaded,
     required this.onFailure,
     this.loadingWidget,
-    this.bannerClickCallback,
-    this.nativeClickCallback,
+    this.unifiedAdClickCallback,
   });
 
   @override
@@ -54,10 +52,10 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
         widgetId,
         AdsterUnifiedCallback(
           onAdClicked: () {
-            widget.bannerClickCallback?.onAdClicked.call();
+            widget.unifiedAdClickCallback?.onAdClicked.call();
           },
           onAdImpression: () {
-            widget.bannerClickCallback?.onAdImpression.call();
+            widget.unifiedAdClickCallback?.onAdImpression.call();
           },
         ),
       );
@@ -147,9 +145,23 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
   Widget _getBannerPlatformWidget() {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return AndroidView(viewType: 'adster_unified_banner');
+        return AndroidView(
+          viewType: 'adster_unified_banner',
+          creationParams: {"widgetId": widgetId},
+          creationParamsCodec: StandardMessageCodec(),
+          onPlatformViewCreated: (id) {
+            log("onPlatformViewCreated: adster_unified_native");
+          },
+        );
       case TargetPlatform.iOS:
-        return UiKitView(viewType: 'adster_unified_banner');
+        return UiKitView(
+          viewType: 'adster_unified_banner',
+          creationParams: {"widgetId": widgetId},
+          creationParamsCodec: StandardMessageCodec(),
+          onPlatformViewCreated: (id) {
+            log("onPlatformViewCreated: adster_unified_native");
+          },
+        );
       default:
         return Text(
           '$defaultTargetPlatform is not yet supported by the web_view plugin',
@@ -169,7 +181,14 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
           },
         );
       case TargetPlatform.iOS:
-        return UiKitView(viewType: 'adster_unified_native');
+        return UiKitView(
+          viewType: 'adster_unified_native',
+          creationParams: {"widgetId": widgetId},
+          creationParamsCodec: StandardMessageCodec(),
+          onPlatformViewCreated: (id) {
+            log("onPlatformViewCreated: adster_unified_native");
+          },
+        );
       default:
         return Text(
           '$defaultTargetPlatform is not yet supported by the web_view plugin',

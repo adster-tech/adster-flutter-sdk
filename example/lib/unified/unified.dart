@@ -15,10 +15,9 @@ class UnifiedWidget extends GetView<UnifiedController> {
         child: AdsterUnifiedAd(
           adPlacementName: "adster_unified_test",
           bannerAdSize: AdsterAdSize.medium,
-          bannerClickCallback: controller.getUnifiedBannerAdCallback(
+          unifiedAdClickCallback: controller.getUnifiedAdCallback(
             AdsterAdSize.medium.toString(),
           ),
-          nativeClickCallback: controller.getUnifiedNativeAdCallback(),
           onBannerAdLoaded: (bannerView) {
             return bannerView;
           },
@@ -41,6 +40,8 @@ class UnifiedWidget extends GetView<UnifiedController> {
                             children: [
                               CachedNetworkImage(
                                 imageUrl: value.imageUrl ?? "",
+                                height: 40,
+                                width: 40,
                                 placeholder:
                                     (context, url) =>
                                         CircularProgressIndicator(),

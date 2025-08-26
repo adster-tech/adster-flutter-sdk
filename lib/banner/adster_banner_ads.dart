@@ -112,9 +112,23 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
   Widget _getPlatformWidget() {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return AndroidView(viewType: 'adster_banner');
+        return AndroidView(
+          viewType: 'adster_banner',
+          creationParams: {
+            'adPlacementName': widget.adPlacementName,
+            'widgetId': widgetId,
+          },
+          creationParamsCodec: StandardMessageCodec(),
+        );
       case TargetPlatform.iOS:
-        return UiKitView(viewType: 'adster_banner');
+        return UiKitView(
+          viewType: 'adster_banner',
+          creationParams: {
+            'adPlacementName': widget.adPlacementName,
+            'widgetId': widgetId,
+          },
+          creationParamsCodec: StandardMessageCodec(),
+        );
       default:
         return Text(
           '$defaultTargetPlatform is not yet supported by the web_view plugin',
