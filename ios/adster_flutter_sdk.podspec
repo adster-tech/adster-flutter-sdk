@@ -16,7 +16,7 @@ A new Flutter project.
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
   s.dependency 'Adster', '~> 1.2.3'
-  s.dependency 'Realm', '~> 20.0'
+  # s.dependency 'Realm', '~> 20.0'
   s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.

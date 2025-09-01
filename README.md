@@ -93,6 +93,11 @@ If you don’t have an AdMob account and want to test SDK initialization, also a
 This framework depends on RealmSwift. Please install RealmSwift via Swift Package Manager - https://github.com/realm/realm-swift.git
 ```
 
+Update required in iOS/Podfile:
+```shell
+use_frameworks! :linkage => :static
+```
+
 Run the following command in the terminal:
 ```shell
 pod install
