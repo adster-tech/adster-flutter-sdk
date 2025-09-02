@@ -89,26 +89,11 @@ If you don’t have an AdMob account and want to test SDK initialization, also a
 
 ## 🍏 iOS Setup
 
-This framework depends on RealmSwift. Please install RealmSwift via Swift Package Manager - https://github.com/realm/realm-swift.git
+### ✅ Info.plist Changes Required for SDK
 
-#### ⚠️ Important: Adding RealmSwift to Runner
-
-When adding the Realm package to the Runner target in Xcode,
-👉 select only _RealmSwift_.
-
-Do not select Realm directly — RealmSwift already includes it.
-This avoids duplicate linking issues and ensures the app builds and runs correctly.
-
-#### Check that RealmSwift in “Frameworks, Libraries, and Embedded Content”
-- Open your project in Xcode.
-- Go to Runner target → General tab.
-- Scroll to Frameworks, Libraries, and Embedded Content.
-- Ensure both Realm.framework and RealmSwift.framework are listed.
-- Set them to Embed & Sign (not just Do Not Embed).
-
-Mofify the iOS/Podfile:
-```shell
-use_frameworks! :linkage => :static
+```xml
+<key>GADApplicationIdentifier</key>
+<string>ca-app-pub-3940256099942544~3347511713</string>
 ```
 
 Run the following command in the terminal:

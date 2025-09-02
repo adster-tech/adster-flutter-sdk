@@ -17,7 +17,6 @@ class BannerWidget extends GetView<BannerController> {
             SizedBox(height: 20),
             Text("Banner (320x250)"),
             AdsterBannerAd(
-              key: UniqueKey(),
               adPlacementName: "adster_banner_300x250",
               clickCallback: getBannerAdCallback(
                 AdsterAdSize.medium.toString(),
@@ -44,7 +43,6 @@ class BannerWidget extends GetView<BannerController> {
             SizedBox(height: 20),
             Text("Banner (300x50)"),
             AdsterBannerAd(
-              key: UniqueKey(),
               adPlacementName: "adster_banner_320x50",
               clickCallback: getBannerAdCallback(AdsterAdSize.small.toString()),
               adSize: AdsterAdSize.small,

@@ -4,18 +4,19 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'adster_flutter_sdk'
-  s.version          = '0.0.1'
-  s.summary          = 'A new Flutter project.'
+  s.version          = '1.0.0'
+  s.summary          = 'Adster Sdk provides you complete ads support for your iOS application'
   s.description      = <<-DESC
 A new Flutter project.
                        DESC
-  s.homepage         = 'http://example.com'
-  s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.homepage         = 'https://adster.tech'
+  s.license          = "MIT"
+  s.author           = { 'Adster' => '' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'Adster', '~> 1.2.3'
+  s.dependency 'Adster', '~> 1.2.4'
+  s.static_framework = true
   s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.
