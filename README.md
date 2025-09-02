@@ -89,8 +89,16 @@ If you don’t have an AdMob account and want to test SDK initialization, also a
 
 ## 🍏 iOS Setup
 
-```txt
-Coming soon
+### ✅ Info.plist Changes Required for SDK
+
+```xml
+<key>GADApplicationIdentifier</key>
+<string>ca-app-pub-3940256099942544~3347511713</string>
+```
+
+Run the following command in the terminal:
+```shell
+pod install
 ```
 
 ---
@@ -140,13 +148,13 @@ AdsterBannerAd(
 
 ### 📏  Native Ad Click Type
 
-| Type of component to be tracked by GAM      |
-|---------------------------------------------|
-| `AdsterNativeAdClickComponent.body`         |
-| `AdsterNativeAdClickComponent.callToAction` |
-| `AdsterNativeAdClickComponent.headline`     |
-| `AdsterNativeAdClickComponent.logo`         |
-| `AdsterNativeAdClickComponent.ratingBar`    |
+| Type of component to be tracked by GAM (Only available in Android) |
+|--------------------------------------------------------------------|
+| `AdsterNativeAdClickComponent.body`                                |
+| `AdsterNativeAdClickComponent.callToAction`                        |
+| `AdsterNativeAdClickComponent.headline`                            |
+| `AdsterNativeAdClickComponent.logo`                                |
+| `AdsterNativeAdClickComponent.ratingBar`                           |
 
 ### ✅ Example Usage
 
@@ -295,6 +303,106 @@ appOpenedAds
       ///Ad failed to load
       print("onFailure: $error");
   });
+```
+
+---
+
+## 🎨 Unified Ads
+
+### ✅ Example Usage
+
+```dart
+AdsterUnifiedAd(
+  adPlacementName: "adster_unified_test",
+  bannerAdSize: AdsterAdSize.medium,
+  unifiedAdClickCallback: controller.getUnifiedAdCallback(
+    AdsterAdSize.medium.toString(),
+  ),
+  onBannerAdLoaded: (bannerView) {
+    return bannerView;
+  },
+  onNativeAdLoaded: (value, nativeMediaView, clickHandler) {
+    return SizedBox(
+      height: 200,
+      child: Row(
+        children: [
+        SizedBox(width: 10),
+        Expanded(child: nativeMediaView),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                  CachedNetworkImage(
+                    imageUrl: value.imageUrl ?? "",
+                    height: 40,
+                    width: 40,
+                    placeholder:
+                    (context, url) =>
+                      CircularProgressIndicator(),
+                    errorWidget:
+                    (context, url, error) => Icon(Icons.error),
+                  ),
+                  SizedBox(width: 10),
+                  Flexible(
+                    child: InkWell(
+                      onTap: () {
+                        clickHandler.call(
+                          AdsterNativeAdClickComponent.headline,
+                        );
+                      },
+                      child: Text(
+                        value.headLine ?? "",
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                ),
+                SizedBox(height: 5),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      clickHandler.call(
+                        AdsterNativeAdClickComponent.body,
+                      );
+                    },
+                    child: Text(
+                      value.body ?? "",
+                      overflow: TextOverflow.clip,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 5),
+                MaterialButton(
+                  onPressed: () {
+                    clickHandler.call(
+                      AdsterNativeAdClickComponent.callToAction,
+                    );
+                  },
+                  color: Colors.grey,
+                  child: Text(value.callToAction ?? ""),
+                ),
+              ],
+              ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+  onFailure: (error) {
+    return Text("Unified not loaded: ${error.message} (${error.code})");
+  },
+)
 ```
 
 ## 🔒 License

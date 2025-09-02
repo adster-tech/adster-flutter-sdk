@@ -42,12 +42,11 @@ class AdsterInterstitialAds {
   }
 
   Future<void> showInterstitialAd() async {
-    var response = await _channel.invokeMethod('showAd').onError((
-      error,
-      stackTrace,
-    ) {
-      return null;
-    });
+    var response = await _channel
+        .invokeMethod('showAd', {'widgetId': key.toString()})
+        .onError((error, stackTrace) {
+          return null;
+        });
     log(response);
   }
 }

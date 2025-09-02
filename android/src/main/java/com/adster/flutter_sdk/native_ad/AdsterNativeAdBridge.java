@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
 import com.adster.flutter_sdk.core.AdsterJSONDataMapper;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdEventsListener;
@@ -25,7 +26,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
+public class AdsterNativeAdBridge extends AdsterBaseAdBridge {
 
     final private MethodChannel methodChannel;
     final private Context context;
@@ -42,7 +43,7 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        if (call.method.equals("loadBanner")) {
+        if (call.method.equals("loadNativeAd")) {
             String adPlacementName = call.argument("adPlacementName");
             String widgetId = call.argument("widgetId");
             if (adPlacementName != null && widgetId != null) {
@@ -145,14 +146,17 @@ public class AdsterNativeAdBridge implements MethodChannel.MethodCallHandler {
         methodChannel.setMethodCallHandler(null);
     }
 
+    @Override
     public MediationNativeAd getNativeAd(String widgetId) {
         return nativeAds.get(widgetId);
     }
 
+    @Override
     public void setMediationNativeAdView(MediationNativeAdView mediationNativeAdView) {
         mediationNativeAdViews.put(mediationNativeAdView.getTag().toString(), mediationNativeAdView);
     }
 
+    @Override
     public void clearWidget(String widgetId) {
         nativeAds.remove(widgetId);
         mediationNativeAdViews.remove(widgetId);

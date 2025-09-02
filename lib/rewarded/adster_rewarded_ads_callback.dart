@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
+
 class AdsterRewardedAdCallback {
   final VoidCallback onAdClicked;
   final VoidCallback onAdImpression;
@@ -7,6 +9,8 @@ class AdsterRewardedAdCallback {
   final VoidCallback onVideoComplete;
   final VoidCallback onVideoClosed;
   final VoidCallback onVideoStart;
+  final void Function(AdsterAdsException error)?
+  onAdFailToPresentFullScreenContentWithError;
 
   AdsterRewardedAdCallback({
     required this.onAdClicked,
@@ -15,5 +19,6 @@ class AdsterRewardedAdCallback {
     required this.onVideoComplete,
     required this.onVideoClosed,
     required this.onVideoStart,
+    this.onAdFailToPresentFullScreenContentWithError,
   });
 }

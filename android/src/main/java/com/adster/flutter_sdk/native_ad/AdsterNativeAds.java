@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.adster.flutter_sdk.R;
+import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
 import com.adster.sdk.mediation.MediationNativeAd;
 import com.adster.sdk.mediation.MediationNativeAdView;
 
@@ -23,10 +24,10 @@ import io.flutter.plugin.platform.PlatformView;
 public class AdsterNativeAds implements PlatformView {
     final Context context;
     private final FrameLayout container;
-    final AdsterNativeAdBridge adsterNativeAdBridge;
+    final AdsterBaseAdBridge adsterNativeAdBridge;
     private final String widgetId;
 
-    public AdsterNativeAds(Context context, String widgetId, AdsterNativeAdBridge adsterNativeAdBridge) {
+    public AdsterNativeAds(Context context, String widgetId, AdsterBaseAdBridge adsterNativeAdBridge) {
         this.context = context;
         this.widgetId = widgetId;
         container = new FrameLayout(context);

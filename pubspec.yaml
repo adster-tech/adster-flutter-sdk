@@ -1,6 +1,6 @@
 name: adster_flutter_sdk
 description: "SDK for flutter consumers"
-version: 1.0.6
+version: 1.0.7
 homepage: https://github.com/adster-tech/adster-flutter-sdk
 
 environment:
@@ -38,7 +38,7 @@ flutter:
         package: com.adster.flutter_sdk
         pluginClass: AdsterSDKPlugin
       ios:
-        pluginClass: AdsterPocPlugin
+        pluginClass: AdsterSDKPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

@@ -11,3 +11,4 @@ export 'interstitial/adster_interstitial_ads_callback.dart';
 export 'app_opened_ad/adster_app_opened_ads.dart';
 export 'app_opened_ad/adster_app_opened_ads_callback.dart';
 export 'core/adster_constants.dart';
+export 'unified_ad/adster_unified_ad.dart';

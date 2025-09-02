@@ -13,6 +13,9 @@ import com.adster.flutter_sdk.interstitial_ad.AdsterInterstitialAdBridge;
 import com.adster.flutter_sdk.native_ad.AdsterNativeAdBridge;
 import com.adster.flutter_sdk.native_ad.AdsterNativeAdViewFactory;
 import com.adster.flutter_sdk.rewarded_ad.AdsterRewardedAdBridge;
+import com.adster.flutter_sdk.unified_ad.AdsterUnifiedAdBridge;
+import com.adster.flutter_sdk.unified_ad.AdsterUnifiedBannerAdViewFactory;
+import com.adster.flutter_sdk.unified_ad.AdsterUnifiedNativeAdViewFactory;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
@@ -39,6 +42,7 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
     private AdsterInterstitialAdBridge adsterInterstitialAdBridge;
     private AdsterBannerAdBridge adsterBannerAdBridge;
     private AdsterAppOpenedAdBridge adsterAppOpenedAdBridge;
+    private AdsterUnifiedAdBridge adsterUnifiedAdBridge;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -79,6 +83,13 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
 
         /*Initialize app opened ad bridge*/
         adsterAppOpenedAdBridge = new AdsterAppOpenedAdBridge(flutterPluginBinding.getBinaryMessenger(), flutterPluginBinding.getApplicationContext());
+
+        /*Initialize unified ad bridge*/
+        adsterUnifiedAdBridge = new AdsterUnifiedAdBridge(flutterPluginBinding.getBinaryMessenger(), context);
+
+        flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("adster_unified_banner", new AdsterUnifiedBannerAdViewFactory(adsterUnifiedAdBridge));
+
+        flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("adster_unified_native", new AdsterUnifiedNativeAdViewFactory(adsterUnifiedAdBridge));
     }
 
 
@@ -98,6 +109,10 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         }
         if (adsterAppOpenedAdBridge != null) {
             adsterAppOpenedAdBridge.dispose();
+        }
+
+        if (adsterUnifiedAdBridge != null) {
+            adsterUnifiedAdBridge.dispose();
         }
     }
 

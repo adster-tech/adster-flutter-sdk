@@ -82,7 +82,7 @@ public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
 
                     @Override
                     public void onUserEarnedReward(@NonNull String widgetId, @NonNull Reward reward) {
-                        clickMethodChannel.invokeMethod("onUserEarnedReward", getWidgetIdJSON(widgetId));
+                        clickMethodChannel.invokeMethod("onUserEarnedReward", getWidgetIdWithRewardJSON(widgetId, reward.getAmount()));
                     }
 
                     @Override
@@ -118,6 +118,13 @@ public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
     Map<String, String> getWidgetIdJSON(String widgetId) {
         Map<String, String> data = new HashMap<>();
         data.put("widgetId", widgetId);
+        return data;
+    }
+
+    Map<String, Object> getWidgetIdWithRewardJSON(String widgetId, int amount) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("widgetId", widgetId);
+        data.put("amount", String.valueOf(amount));
         return data;
     }
 
