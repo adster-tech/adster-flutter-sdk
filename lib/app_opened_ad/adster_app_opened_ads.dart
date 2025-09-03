@@ -18,7 +18,7 @@ class AdsterAppOpenedAds {
 
   Future<dynamic> loadAd({
     required String adPlacementName,
-    AdsterAppOpnenedAdCallback? callback,
+    AdsterAppOpenedAdCallback? callback,
   }) async {
     if (callback != null) {
       AdsterAppOpenedAdCallbackChannel.instance.registerWidget(

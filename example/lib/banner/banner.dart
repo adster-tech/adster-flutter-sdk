@@ -1,6 +1,5 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_sdk_example/banner/banner_controller.dart';
 import 'package:get/get.dart';
 

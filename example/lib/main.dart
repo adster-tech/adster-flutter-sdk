@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: false,
-        appBarTheme: AppBarTheme(color: Colors.brown),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.brown),
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: Colors.white,
       ),

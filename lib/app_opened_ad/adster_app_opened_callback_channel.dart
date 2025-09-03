@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 class AdsterAppOpenedAdCallbackChannel {
   static final AdsterAppOpenedAdCallbackChannel _channel =
       AdsterAppOpenedAdCallbackChannel._();
-  final Map<String, AdsterAppOpnenedAdCallback> _widgetMapper = {};
+  final Map<String, AdsterAppOpenedAdCallback> _widgetMapper = {};
   MethodChannel channel = MethodChannel(
     'adster.channel:adster_app_opened_ad_click',
   );
@@ -15,7 +15,7 @@ class AdsterAppOpenedAdCallbackChannel {
 
   static AdsterAppOpenedAdCallbackChannel get instance => _channel;
 
-  void registerWidget(String widgetId, AdsterAppOpnenedAdCallback callback) {
+  void registerWidget(String widgetId, AdsterAppOpenedAdCallback callback) {
     channel.setMethodCallHandler(setMethodCallHandler);
     _widgetMapper[widgetId] = callback;
   }

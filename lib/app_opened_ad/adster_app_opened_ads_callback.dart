@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-class AdsterAppOpnenedAdCallback {
+class AdsterAppOpenedAdCallback {
   final VoidCallback onAdClicked;
   final VoidCallback onAdImpression;
   final VoidCallback onAdOpened;
@@ -8,7 +8,7 @@ class AdsterAppOpnenedAdCallback {
   final void Function(int errorCode, String errorMessage) onFailure;
   final Function(double? revenue, String? adUnitId, String? network)? onAdRevenuePaid;
 
-  AdsterAppOpnenedAdCallback({
+  AdsterAppOpenedAdCallback({
     required this.onAdClicked,
     required this.onAdImpression,
     required this.onAdOpened,

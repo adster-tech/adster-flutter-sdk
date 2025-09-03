@@ -1,12 +1,11 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:flutter_sdk_example/base_controller.dart';
-import 'package:get/get.dart';
 
 class HomeController extends BaseController {
   AdsterAppOpenedAds appOpenedAds = AdsterAppOpenedAds();
 
-  AdsterAppOpnenedAdCallback getAppOpenedAdCallback() {
-    return AdsterAppOpnenedAdCallback(
+  AdsterAppOpenedAdCallback getAppOpenedAdCallback() {
+    return AdsterAppOpenedAdCallback(
       onAdClicked: () {
         notifySuccess(title: "AppOpenedAd:onAdClicked");
       },
