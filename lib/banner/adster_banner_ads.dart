@@ -1,7 +1,5 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
-import 'package:adster_flutter_sdk/banner/adster_banner_ads_callback.dart';
 import 'package:adster_flutter_sdk/banner/adster_banner_callback_channel.dart';
-import 'package:adster_flutter_sdk/core/adster_constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';

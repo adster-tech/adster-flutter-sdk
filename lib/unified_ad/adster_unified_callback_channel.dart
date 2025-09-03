@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:adster_flutter_sdk/banner/adster_banner_ads_callback.dart';
 import 'package:flutter/services.dart';
 
 import 'adster_unified_ads_callback.dart';

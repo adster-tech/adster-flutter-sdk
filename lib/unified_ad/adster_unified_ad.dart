@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import '../native/adster_native_callback_channel.dart';
 import 'adster_unified_ads_callback.dart';
 import 'adster_unified_callback_channel.dart';
 

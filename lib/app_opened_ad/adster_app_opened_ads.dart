@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:adster_flutter_sdk/app_opened_ad/adster_app_opened_callback_channel.dart';
-import 'package:adster_flutter_sdk/rewarded/adster_rewarded_callback_channel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

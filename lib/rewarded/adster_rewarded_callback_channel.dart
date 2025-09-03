@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
-import 'package:adster_flutter_sdk/rewarded/adster_rewarded_ads_callback.dart';
 import 'package:flutter/services.dart';
 
 class AdsterRewardedAdCallbackChannel {

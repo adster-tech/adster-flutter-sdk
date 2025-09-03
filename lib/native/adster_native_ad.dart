@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:adster_flutter_sdk/native/adster_native_callback_channel.dart';
+
+import 'package:adster_flutter_sdk/core/asdter_typedefs.dart';
 import 'package:adster_flutter_sdk/native/adster_mediation_native_ad_model.dart';
 import 'package:adster_flutter_sdk/native/adster_native_ad_callback.dart';
+import 'package:adster_flutter_sdk/native/adster_native_callback_channel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:adster_flutter_sdk/core/asdter_typedefs.dart';
 
 class AdsterNativeAd extends StatefulWidget {
   final String adPlacementName;
