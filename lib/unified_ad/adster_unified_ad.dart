@@ -57,6 +57,13 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
           onAdImpression: () {
             widget.unifiedAdClickCallback?.onAdImpression.call();
           },
+          onAdRevenuePaid: (revenue, adUnitId, network) {
+            widget.unifiedAdClickCallback?.onAdRevenuePaid.call(
+              revenue,
+              adUnitId,
+              network,
+            );
+          },
         ),
       );
     });

@@ -60,6 +60,17 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
           onAdImpression: () {
             widget.clickCallback?.onAdImpression?.call();
           },
+          onAdRevenuePaid: (
+            double? revenue,
+            String? adUnitId,
+            String? network,
+          ) {
+            widget.clickCallback?.onAdRevenuePaid?.call(
+              revenue,
+              adUnitId,
+              network,
+            );
+          },
         ),
       );
     });

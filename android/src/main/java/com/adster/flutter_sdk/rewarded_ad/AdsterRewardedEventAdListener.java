@@ -45,6 +45,11 @@ abstract public class AdsterRewardedEventAdListener extends RewardedAdEventsList
         onVideoStart(widgetId);
     }
 
+    @Override
+    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network) {
+        onAdRevenuePaid(revenue, adUnitId, network, widgetId);
+    }
+
     abstract public void onAdClicked(@NonNull String widgetId);
 
     abstract public void onAdImpression(@NonNull String widgetId);
@@ -56,4 +61,6 @@ abstract public class AdsterRewardedEventAdListener extends RewardedAdEventsList
     abstract public void onVideoClosed(@NonNull String widgetId);
 
     abstract public void onVideoStart(@NonNull String widgetId);
+
+    abstract public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String widgetId);
 }

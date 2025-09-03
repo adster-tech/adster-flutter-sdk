@@ -32,6 +32,11 @@ abstract public class AdsterInterstitialEventAdListener extends InterstitialAdEv
         onAdClosed(widgetId);
     }
 
+    @Override
+    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network) {
+        onAdRevenuePaid(revenue, adUnitId, network, widgetId);
+    }
+
     abstract public void onAdClicked(@NonNull String widgetId);
 
     abstract public void onAdImpression(@NonNull String widgetId);
@@ -39,4 +44,6 @@ abstract public class AdsterInterstitialEventAdListener extends InterstitialAdEv
     abstract public void onAdOpened(@NonNull String widgetId);
 
     abstract public void onAdClosed(@NonNull String widgetId);
+
+    abstract public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String widgetId);
 }

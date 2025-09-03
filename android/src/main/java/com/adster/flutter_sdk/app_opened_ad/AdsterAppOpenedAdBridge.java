@@ -12,8 +12,6 @@ import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationAppOpenAd;
-import com.adster.sdk.mediation.MediationRewardedAd;
-import com.adster.sdk.mediation.Reward;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,28 +67,38 @@ public class AdsterAppOpenedAdBridge implements MethodChannel.MethodCallHandler 
                 }).withAppOpenAdEventsListener(new AdsterAppOpenedEventAdListener(widgetId) {
 
                     @Override
+                    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network, @NonNull String widgetId) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("revenue", revenue);
+                        data.put("adUnitId", adUnitId);
+                        data.put("network", network);
+                        data.put("widgetId", widgetId);
+                        clickMethodChannel.invokeMethod("onAdRevenuePaid", data);
+                    }
+
+                    @Override
                     public void onAdClicked(@NonNull String widgetId) {
-                        clickMethodChannel.invokeMethod("onAdClicked", getWidgetIdJSON(widgetId));
+                        clickMethodChannel.invokeMethod("onAdClicked", getResponseJson(widgetId));
                     }
 
                     @Override
                     public void onAdImpression(@NonNull String widgetId) {
-                        clickMethodChannel.invokeMethod("onAdImpression", getWidgetIdJSON(widgetId));
+                        clickMethodChannel.invokeMethod("onAdImpression", getResponseJson(widgetId));
                     }
 
                     @Override
                     public void onAdOpened(@NonNull String widgetId) {
-                        clickMethodChannel.invokeMethod("onAdOpened", getWidgetIdJSON(widgetId));
+                        clickMethodChannel.invokeMethod("onAdOpened", getResponseJson(widgetId));
                     }
 
                     @Override
                     public void onAdClosed(@NonNull String widgetId) {
-                        clickMethodChannel.invokeMethod("onAdClosed", getWidgetIdJSON(widgetId));
+                        clickMethodChannel.invokeMethod("onAdClosed", getResponseJson(widgetId));
                     }
 
                     @Override
                     public void onFailure(@Nullable AdError adError, @NonNull String widgetId) {
-                        Map<String, String> widgetIdJSON = getWidgetIdJSON(widgetId);
+                        Map<String, String> widgetIdJSON = getResponseJson(widgetId);
                         Map<String, Object> errorData = new HashMap<>(widgetIdJSON);
                         if (adError != null) {
                             errorData.put("errorCode", adError.getErrorCode());
@@ -108,7 +116,7 @@ public class AdsterAppOpenedAdBridge implements MethodChannel.MethodCallHandler 
         }
     }
 
-    Map<String, String> getWidgetIdJSON(String widgetId) {
+    Map<String, String> getResponseJson(String widgetId) {
         Map<String, String> data = new HashMap<>();
         data.put("widgetId", widgetId);
         return data;

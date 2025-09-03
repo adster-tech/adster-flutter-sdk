@@ -84,6 +84,16 @@ public class AdsterInterstitialAdBridge implements MethodChannel.MethodCallHandl
                     public void onAdClosed(@NonNull String widgetId) {
                         clickMethodChannel.invokeMethod("onAdClosed", getWidgetIdJSON(widgetId));
                     }
+
+                    @Override
+                    public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String widgetId) {
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("revenue", v);
+                        data.put("adUnitId", s);
+                        data.put("network", s1);
+                        data.put("widgetId", widgetId);
+                        clickMethodChannel.invokeMethod("onAdRevenuePaid", data);
+                    }
                 }).build().loadAd(configuration);
             } else {
                 result.error("EMP_PLACEMENT_ID", "Placement id were not supplied", null);

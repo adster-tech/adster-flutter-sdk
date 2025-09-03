@@ -36,6 +36,12 @@ abstract public class AdsterAppOpenedEventAdListener extends AppOpenAdEventsList
     }
 
     @Override
+    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network) {
+        onAdRevenuePaid(revenue, adUnitId, network, widgetId);
+    }
+
+
+    @Override
     public void onFailure(@Nullable AdError adError) {
         onFailure(adError, widgetId);
     }
@@ -49,4 +55,6 @@ abstract public class AdsterAppOpenedEventAdListener extends AppOpenAdEventsList
     abstract public void onAdClosed(@NonNull String widgetId);
 
     abstract public void onFailure(@Nullable AdError adError, @NonNull String widgetId);
+
+    abstract public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String widgetId);
 }

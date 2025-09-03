@@ -27,6 +27,10 @@ class AdsterRewardedAdCallbackChannel {
 
   Future<void> setMethodCallHandler(MethodCall call) async {
     String? widgetId = call.arguments["widgetId"];
+    double? revenue = call.arguments["revenue"];
+    String? adUnitId = call.arguments["adUnitId"];
+    String? network = call.arguments["network"];
+
     switch (call.method) {
       case 'onAdClicked':
         if ((widgetId ?? "").isNotEmpty &&
@@ -76,6 +80,16 @@ class AdsterRewardedAdCallbackChannel {
                   message: call.arguments["message"],
                 ),
               );
+        }
+        break;
+      case 'onAdRevenuePaid':
+        if ((widgetId ?? "").isNotEmpty &&
+            _widgetMapper.containsKey(widgetId)) {
+          _widgetMapper[widgetId]?.onAdRevenuePaid?.call(
+            revenue,
+            adUnitId,
+            network,
+          );
         }
         break;
     }

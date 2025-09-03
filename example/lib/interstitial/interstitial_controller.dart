@@ -35,6 +35,17 @@ class InterstitialController extends BaseController {
       onAdClosed: () {
         notifySuccess(title: "InterstitialAd:onAdClosed");
       },
+      onAdRevenuePaid: (double? revenue, String? adUnitId, String? network) {
+        notifySuccess(
+          title:
+              "InterstitialAd:onAdRevenuePaid, revenue: $revenue, adUnitId: $adUnitId, network: $network",
+        );
+      },
+      onAdFailToPresentFullScreenContentWithError: (error) {
+        notifySuccess(
+          title: "InterstitialAd:onAdFailToPresentFullScreenContentWithError",
+        );
+      },
     );
   }
 }

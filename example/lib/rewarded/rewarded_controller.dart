@@ -35,6 +35,9 @@ class RewardedController extends BaseController {
       onVideoStart: () {
         notifySuccess(title: "RewardedAd:onVideoStart");
       },
+      onAdRevenuePaid: (double? revenue, String? adUnitId, String? network) {
+        notifySuccess(title: "RewardedAd:onAdRevenuePaid: \$$revenue");
+      },
     );
   }
 }
