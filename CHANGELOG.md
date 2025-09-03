@@ -13,3 +13,8 @@
 
 ## 1.0.6
 - Added support for play services ads 24.3.0
+
+## 1.0.7
+- iOS configuration added
+- Unified Ads
+- onAdRevenuePaid added
