@@ -1,5 +1,5 @@
 import Flutter
-import SwiftUICore
+import SwiftUI
 import UIKit
 import AdsFramework
 
@@ -42,12 +42,12 @@ class AdsterUnifiedBannerAdView: NSObject, FlutterPlatformView {
 }
 
 extension AdsterUnifiedBannerAdView: MediationBannerAdEventDelegate {
-    func recordClick() {
+    func recordBannerClick() {
         print("Ad clicked")
         adBridge.adClickChannel.invokeMethod(String("onAdClicked"), arguments: ["widgetId":widgetId])
     }
-    
-    func recordImpression() {
+
+    func recordBannerImpression() {
         print("Ad impression recorded")
         adBridge.adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId])
     }

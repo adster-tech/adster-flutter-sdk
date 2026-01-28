@@ -56,12 +56,12 @@ class AdsterUnifiedNativeAdView: NSObject, FlutterPlatformView{
 }
 
 extension AdsterUnifiedNativeAdView: MediationNativeAdEventDelegate {
-    func recordClick() {
+    func recordNativeClick() {
         print("Ad clicked")
         adBridge.adClickChannel.invokeMethod(String("onAdClicked"), arguments: ["widgetId":widgetId])
     }
-    
-    func recordImpression() {
+
+    func recordNativeImpression() {
         print("Ad impression recorded")
         adBridge.adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId])
     }

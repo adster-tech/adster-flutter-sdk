@@ -57,27 +57,31 @@ class AdsterUnifiedAd : NSObject{
 
 extension AdsterUnifiedAd: MediationAdDelegate {
     func onInterstitialAdLoaded(interstitialAd: any AdsFramework.MediationInterstitialAd) {
-        
+
     }
-    
+
     func onRewardedAdLoaded(rewardedAd: any AdsFramework.MediationRewardedAd) {
-        
+
     }
-    
+
+    func onRewardedInterstitialAdLoaded(rewardedInterstitialAd: any AdsFramework.MediationRewardedInterstitialAd) {
+
+    }
+
     func onNativeAdLoaded(nativeAd: any AdsFramework.MediationNativeAd) {
         self.nativeAdView = nativeAd
         self.onNativeAdLoadComplete?(widgetId,nativeAd)
     }
-    
+
     func onCustomNativeAdLoaded(customNativeAd: any AdsFramework.MediationNativeCustomFormatAd) {
-        
+
     }
-    
+
     func onAdFailedToLoad(error: AdError) {
         print("Banner Ad request failed with reason \(String(describing: error.description))")
         self.onAdLoadFailed?(error.description ?? "UNKNOWN")
     }
-    
+
     func onBannerAdLoaded(bannerAd: MediationBannerAd) {
         self.bannerAdView = bannerAd
         self.onBannerAdLoadComplete?(widgetId,bannerAd)
@@ -85,12 +89,12 @@ extension AdsterUnifiedAd: MediationAdDelegate {
 }
 
 extension AdsterUnifiedAd: MediationNativeAdEventDelegate {
-    func recordClick() {
+    func recordNativeClick() {
         print("Ad clicked")
         adClickChannel.invokeMethod(String("onAdClicked"), arguments: ["widgetId":widgetId])
     }
-    
-    func recordImpression() {
+
+    func recordNativeImpression() {
         print("Ad impression recorded")
         adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId])
     }

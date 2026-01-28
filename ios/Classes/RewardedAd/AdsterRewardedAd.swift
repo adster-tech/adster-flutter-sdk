@@ -39,28 +39,32 @@ class AdsterRewardedAd : NSObject{
 
 extension AdsterRewardedAd: MediationAdDelegate {
     func onBannerAdLoaded(bannerAd: any AdsFramework.MediationBannerAd) {
-        
+
     }
-    
+
     func onRewardedAdLoaded(rewardedAd: any AdsFramework.MediationRewardedAd) {
         self.rewardedAd = rewardedAd
         self.onAdLoadComplete?(widgetId)
         self.isAdLoaded = true
         print("Rewarded Ad Loaded \(widgetId)")
     }
-    
+
+    func onRewardedInterstitialAdLoaded(rewardedInterstitialAd: any AdsFramework.MediationRewardedInterstitialAd) {
+
+    }
+
     func onNativeAdLoaded(nativeAd: any AdsFramework.MediationNativeAd) {
-        
+
     }
-    
+
     func onCustomNativeAdLoaded(customNativeAd: any AdsFramework.MediationNativeCustomFormatAd) {
-        
+
     }
-    
+
     func onInterstitialAdLoaded(interstitialAd: any MediationInterstitialAd) {
-    
+
     }
-    
+
     func onAdFailedToLoad(error: AdError) {
         print("Interstitial Ad request failed with reason \(error.description ?? "")")
         self.isAdLoaded = false
@@ -69,27 +73,27 @@ extension AdsterRewardedAd: MediationAdDelegate {
 }
 
 extension AdsterRewardedAd: MediationRewardedAdEventDelegate {
-    func didRewardUser() {
+    func didRewardUser(reward: AdsFramework.AdReward) {
         adClickChannel.invokeMethod(String("onUserEarnedReward"), arguments:["widgetId":widgetId,])
     }
-    
+
     func didStartVideo() {
         adClickChannel.invokeMethod(String("onVideoStart"), arguments:["widgetId":widgetId,])
     }
-    
+
     func didEndVideo() {
         adClickChannel.invokeMethod(String("onVideoComplete"), arguments:["widgetId":widgetId,])
     }
-    
+
     func ad(didFailToPresentFullScreenContentWithError error: AdError) {
         adClickChannel.invokeMethod(String("onAdFailToPresentFullScreenContentWithError"), arguments: ["widgetId":widgetId,"code":"1","message":error.description])
     }
-    
-    func recordClick() {
+
+    func recordRewardedClick() {
         adClickChannel.invokeMethod(String("onAdClicked"), arguments: ["widgetId":widgetId,])
     }
-    
-    func recordImpression() {
+
+    func recordRewardedImpression() {
         adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId,])
     }
 }

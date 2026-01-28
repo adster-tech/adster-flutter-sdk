@@ -15,7 +15,7 @@ A new Flutter project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'Adster', '~> 1.2.4'
+  s.dependency 'Adster', '~> 1.2.9'
   s.static_framework = true
   s.platform = :ios, '12.0'
 

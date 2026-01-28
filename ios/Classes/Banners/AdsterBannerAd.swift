@@ -38,26 +38,30 @@ class AdsterBannerAd : NSObject{
 
 extension AdsterBannerAd: MediationAdDelegate {
     func onInterstitialAdLoaded(interstitialAd: any AdsFramework.MediationInterstitialAd) {
-        
+
     }
-    
+
     func onRewardedAdLoaded(rewardedAd: any AdsFramework.MediationRewardedAd) {
-        
+
     }
-    
+
+    func onRewardedInterstitialAdLoaded(rewardedInterstitialAd: any AdsFramework.MediationRewardedInterstitialAd) {
+
+    }
+
     func onNativeAdLoaded(nativeAd: any AdsFramework.MediationNativeAd) {
-        
+
     }
-    
+
     func onCustomNativeAdLoaded(customNativeAd: any AdsFramework.MediationNativeCustomFormatAd) {
-        
+
     }
-    
+
     func onAdFailedToLoad(error: AdError) {
         print("Banner Ad request failed with reason \(String(describing: error.description))")
         self.onAdLoadFailed?(error.description ?? "UNKNOWN")
     }
-    
+
     func onBannerAdLoaded(bannerAd: MediationBannerAd) {
         self.bannerAdView = bannerAd
         self.onAdLoadComplete?(widgetId,bannerAd)

@@ -39,21 +39,25 @@ class AdsterInterstitialAd : NSObject{
 
 extension AdsterInterstitialAd: MediationAdDelegate {
     func onBannerAdLoaded(bannerAd: any AdsFramework.MediationBannerAd) {
-        
+
     }
-    
+
     func onRewardedAdLoaded(rewardedAd: any AdsFramework.MediationRewardedAd) {
-        
+
     }
-    
+
+    func onRewardedInterstitialAdLoaded(rewardedInterstitialAd: any AdsFramework.MediationRewardedInterstitialAd) {
+
+    }
+
     func onNativeAdLoaded(nativeAd: any AdsFramework.MediationNativeAd) {
-        
+
     }
-    
+
     func onCustomNativeAdLoaded(customNativeAd: any AdsFramework.MediationNativeCustomFormatAd) {
-        
+
     }
-    
+
     func onInterstitialAdLoaded(interstitialAd: any MediationInterstitialAd) {
         self.interstitialAd = interstitialAd
         self.onAdLoadComplete?(widgetId)
@@ -62,7 +66,7 @@ extension AdsterInterstitialAd: MediationAdDelegate {
         //interstitialAd.presentInterstitial(from: nil)
         //interstitialAd.eventDelegate = self
     }
-    
+
     func onAdFailedToLoad(error: AdError) {
         print("Interstitial Ad request failed with reason \(error.description ?? "")")
         self.isAdLoaded = false
@@ -74,20 +78,20 @@ extension AdsterInterstitialAd: MediationInterstitialAdEventDelegate {
     func ad(didFailToPresentFullScreenContentWithError error: AdError) {
         adClickChannel.invokeMethod(String("onAdFailToPresentFullScreenContentWithError"), arguments: ["widgetId":widgetId,"code":"1","message":error.description])
     }
-    
+
     func adWillPresentFullScreenContent() {
         adClickChannel.invokeMethod(String("onAdOpened"), arguments:["widgetId":widgetId,])
     }
-    
+
     func adDidDismissFullScreenContent() {
         adClickChannel.invokeMethod(String("onAdClosed"), arguments: ["widgetId":widgetId,])
     }
-    
-    func recordClick() {
+
+    func recordInterstitialClick() {
         adClickChannel.invokeMethod(String("onAdClicked"), arguments: ["widgetId":widgetId,])
     }
-    
-    func recordImpression() {
+
+    func recordInterstitialImpression() {
         adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId,])
     }
 }
