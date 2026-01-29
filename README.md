@@ -12,49 +12,32 @@ This Flutter project demonstrates the integration of the `adster_flutter_sdk` fo
 
 ## 📱 Android Setup
 
-### 🔐 Authentication Setup for Adster Orchestration SDK
+### 🔐 Make sure `mavenCentral()` is enabled
 
-To securely access the native Adster SDK hosted on GitHub Packages, your project must provide authentication credentials. These are required to fetch the sdk from our private Maven repository.
+Most Flutter Android projects already include this, but if your project is older, ensure your repositories include **mavenCentral**.
 
-#### 📦 Step 1: Add Maven Credentials
-
-You can provide the credentials in **either of two ways**:
-
-##### 🔧 Option A: Add to `gradle.properties`
-
-Add the following lines to either your project’s `android/gradle.properties` file **or** your global `~/.gradle/gradle.properties`:
-
-```properties
-adsterMavenUsername=YOUR_GITHUB_USERNAME
-adsterMavenPassword=YOUR_PERSONAL_ACCESS_TOKEN
+**Gradle (recommended, `android/settings.gradle`)**
+```
+dependencyResolutionManagement {
+  repositories {
+    google()
+    mavenCentral()
+  }
+}
 ```
 
-> 💡 You can generate a [GitHub Personal Access Token (classic)](https://github.com/settings/tokens?type=beta) with `read:packages` and `repo` scopes.
+**OR android/build.gradle**
 
-##### 🌐 Option B: Use Environment Variables (ideal for CI/CD)
-
-Alternatively, you can export these environment variables in your terminal or CI setup:
-
-```bash
-export ADSTER_MAVEN_USERNAME=YOUR_GITHUB_USERNAME
-export ADSTER_MAVEN_PASSWORD=YOUR_PERSONAL_ACCESS_TOKEN
 ```
-
----
-
-#### ⚠️ Build Fails Without Credentials
-
-If credentials are not set, the build will fail fast with a clear error message:
-
-```text
-❗ Missing Adster Maven credentials.
-Please set 'adsterMavenUsername' and 'adsterMavenPassword'
-in gradle.properties or as environment variables.
+allprojects {
+  repositories {
+    google()
+    mavenCentral()
+  }
+}
 ```
 
 #### ✅ That's It!
-
-Once credentials are provided, the Flutter plugin will be able to fetch and integrate the native orchestration SDK seamlessly.
 
 If you face any issues, feel free to contact [support@adster.tech](mailto:support@adster.tech).
 
@@ -66,13 +49,7 @@ Please add the following permissions to your Android `AndroidManifest.xml`:
 
 ```xml
 <uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
 If you don’t have an AdMob account and want to test SDK initialization, also add:
