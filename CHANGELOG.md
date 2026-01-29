@@ -26,3 +26,6 @@
 
 ## 1.0.9
 - Updated minimum iOS deployment target to 14.0 (required by Adster iOS SDK 1.2.9)
+
+## 1.1.0
+- Documentation updated
