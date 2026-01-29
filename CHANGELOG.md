@@ -18,3 +18,8 @@
 - iOS configuration added
 - Unified Ads
 - onAdRevenuePaid added
+
+## 1.0.8
+- Updated Android SDK to version 2.2.4
+- Updated iOS SDK to version 1.2.9
+- Fixed iOS protocol conformance for updated SDK
