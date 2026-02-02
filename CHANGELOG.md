@@ -29,3 +29,7 @@
 
 ## 1.1.0
 - Documentation updated
+
+## 1.1.1
+- Upgraded Flutter SDK constraint to 3.9.0
+- Upgraded Dart SDK constraint to 3.9.0
