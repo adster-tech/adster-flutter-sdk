@@ -41,7 +41,7 @@ android {
     dependencies {
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.mockito:mockito-core:5.0.0")
-        implementation ("com.adstertech:orchestrationsdk:2.2.4")
+        implementation ("com.adstertech:orchestrationsdk:2.2.6")
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version" // okay even for Java
     }
 
