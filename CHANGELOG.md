@@ -34,6 +34,11 @@
 - Upgraded Flutter SDK constraint to 3.9.0
 - Upgraded Dart SDK constraint to 3.9.0
 
+## 1.1.3
+- Changed AdsterAdSize from enum to class for custom size support
+- Fixed AdsterAdSize.custom() recursive call bug
+- Fixed AdsterAdSize.toString() formatting
+
 ## 1.1.2
 - Updated iOS SDK to version 1.3.1
 - Updated minimum iOS deployment target to 13.0

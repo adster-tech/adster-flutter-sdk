@@ -1,21 +1,19 @@
-enum AdsterAdSize {
-  small(320.0, 50.0),
-  medium(300.0, 250.0),
-  large(600.0, 600.0);
-
-  final double height;
+class AdsterAdSize {
   final double width;
+  final double height;
 
   const AdsterAdSize(this.width, this.height);
 
+  static const small = AdsterAdSize(320.0, 50.0);
+  static const medium = AdsterAdSize(300.0, 250.0);
+  static const large = AdsterAdSize(600.0, 600.0);
+
   factory AdsterAdSize.custom(double width, double height) {
-    return AdsterAdSize.custom(width, height);
+    return AdsterAdSize(width, height);
   }
 
   @override
-  String toString() {
-    return "${width}x$height)";
-  }
+  String toString() => "${width}x$height";
 }
 
 enum AdsterNativeAdClickComponent {
