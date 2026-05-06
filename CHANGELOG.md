@@ -53,3 +53,7 @@
 ## 1.1.6
 - Updated Android SDK to version 2.3.7
 - Updated iOS SDK to version 1.4.0
+
+## 1.1.7
+- Updated Android SDK to version 2.4.2
+- Updated iOS SDK to version 1.4.4
