@@ -1,9 +1,11 @@
 import 'dart:ui';
 
+import 'package:adster_flutter_sdk/core/adster_revenue.dart';
+
 class AdsterNativeAdCallback {
   VoidCallback? onAdClicked;
   VoidCallback? onAdImpression;
-  final Function(double? revenue, String? adUnitId, String? network)? onAdRevenuePaid;
+  final AdsterRevenueCallback? onAdRevenuePaid;
 
   AdsterNativeAdCallback({
     this.onAdClicked,

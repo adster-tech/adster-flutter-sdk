@@ -48,11 +48,13 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
           onAdImpression: () {
             widget.clickCallback?.onAdImpression.call();
           },
-          onAdRevenuePaid: (revenue, adUnitId, network) {
+          onAdRevenuePaid: (revenue, adUnitId, network, currency, precisionType) {
             widget.clickCallback?.onAdRevenuePaid.call(
               revenue,
               adUnitId,
               network,
+              currency,
+              precisionType,
             );
           },
         ),

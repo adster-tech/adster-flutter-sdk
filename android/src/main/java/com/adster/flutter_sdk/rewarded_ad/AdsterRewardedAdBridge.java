@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.adster.flutter_sdk.core.AdsterJSONDataMapper;
+import com.adster.flutter_sdk.core.AdsterRevenueMapper;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
@@ -16,6 +17,7 @@ import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationNativeAd;
 import com.adster.sdk.mediation.MediationRewardedAd;
+import com.adster.sdk.mediation.PrecisionType;
 import com.adster.sdk.mediation.Reward;
 import com.adster.sdk.mediation.RewardedAdEventsListener;
 
@@ -101,13 +103,8 @@ public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
                     }
 
                     @Override
-                    public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String widgetId) {
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("revenue", v);
-                        data.put("adUnitId", s);
-                        data.put("network", s1);
-                        data.put("widgetId", widgetId);
-                        clickMethodChannel.invokeMethod("onAdRevenuePaid", data);
+                    public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String currency, @NonNull PrecisionType precisionType, @NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdRevenuePaid", AdsterRevenueMapper.toMap(v, s, s1, currency, precisionType, widgetId));
                     }
                 }).build().loadAd(configuration);
             } else {

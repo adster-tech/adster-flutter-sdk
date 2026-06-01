@@ -44,6 +44,10 @@ extension AdsterRewardedAd: MediationAdDelegate {
 
     func onRewardedAdLoaded(rewardedAd: any AdsFramework.MediationRewardedAd) {
         self.rewardedAd = rewardedAd
+        self.rewardedAd?.eventCallbacks = adsterRevenueOnlyCallbacks(
+            widgetId: widgetId,
+            channel: adClickChannel
+        )
         self.onAdLoadComplete?(widgetId)
         self.isAdLoaded = true
         print("Rewarded Ad Loaded \(widgetId)")
@@ -97,4 +101,3 @@ extension AdsterRewardedAd: MediationRewardedAdEventDelegate {
         adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId,])
     }
 }
-

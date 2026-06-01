@@ -7,11 +7,13 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
+import com.adster.flutter_sdk.core.AdsterRevenueMapper;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationBannerAd;
+import com.adster.sdk.mediation.PrecisionType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,13 +69,8 @@ public class AdsterBannerAdBridge extends AdsterBaseAdBridge {
                     }
 
                     @Override
-                    public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String widgetId) {
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("revenue", v);
-                        data.put("adUnitId", s);
-                        data.put("network", s1);
-                        data.put("widgetId", widgetId);
-                        clickMethodChannel.invokeMethod("onAdRevenuePaid", data);
+                    public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String currency, @NonNull PrecisionType precisionType, @NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdRevenuePaid", AdsterRevenueMapper.toMap(v, s, s1, currency, precisionType, widgetId));
                     }
                 }).build().loadAd(configuration);
             } else {

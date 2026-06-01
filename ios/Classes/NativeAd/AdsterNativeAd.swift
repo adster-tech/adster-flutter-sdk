@@ -11,12 +11,14 @@ class AdsterNativeAd : NSObject{
     private var adClickChannel: FlutterMethodChannel
     private var adLoadChannel: FlutterMethodChannel
     private var nativeAdView: AdsFramework.MediationNativeAd?
+    private var customNativeAdView: AdsFramework.MediationNativeCustomFormatAd?
     let headline = UIView()
     let body = UIView()
     let cta = UIView()
     let logo = UIView()
     var mediaViewByAd: UIView?
     var onAdLoadComplete: ((String,AdsFramework.MediationNativeAd) -> Void)?
+    var onCustomNativeAdLoadComplete: ((String, AdsFramework.MediationNativeCustomFormatAd) -> Void)?
     var onAdLoadFailed: ((String) -> Void)?
     
     init(widgetId: String,placementId: String, adClickChannel: FlutterMethodChannel, adLoadChannel: FlutterMethodChannel,publisherProvidedId: String?,customTargetingParams: [String:String]?) {
@@ -38,6 +40,10 @@ class AdsterNativeAd : NSObject{
     
     func mediaView() -> AdsFramework.MediationNativeAd? {
         nativeAdView
+    }
+
+    func customNativeAd() -> AdsFramework.MediationNativeCustomFormatAd? {
+        customNativeAdView
     }
     
     func setMediaViewByAd(mediaView: UIView) {
@@ -64,11 +70,20 @@ extension AdsterNativeAd: MediationAdDelegate {
 
     func onNativeAdLoaded(nativeAd: any AdsFramework.MediationNativeAd) {
         self.nativeAdView = nativeAd
+        self.nativeAdView?.eventCallbacks = adsterRevenueOnlyCallbacks(
+            widgetId: widgetId,
+            channel: adClickChannel
+        )
         self.onAdLoadComplete?(widgetId,nativeAd)
     }
 
     func onCustomNativeAdLoaded(customNativeAd: any AdsFramework.MediationNativeCustomFormatAd) {
-
+        self.customNativeAdView = customNativeAd
+        self.customNativeAdView?.eventCallbacks = adsterRevenueOnlyCallbacks(
+            widgetId: widgetId,
+            channel: adClickChannel
+        )
+        self.onCustomNativeAdLoadComplete?(widgetId, customNativeAd)
     }
 
     func onAdFailedToLoad(error: AdError) {
@@ -92,5 +107,3 @@ extension AdsterNativeAd: MediationNativeAdEventDelegate {
         adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId])
     }
 }
-
-

@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'adster_flutter_sdk'
-  s.version          = '1.0.0'
+  s.version          = '1.2.0'
   s.summary          = 'Adster Sdk provides you complete ads support for your iOS application'
   s.description      = <<-DESC
 A new Flutter project.
@@ -15,7 +15,7 @@ A new Flutter project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'Adster', '~> 1.4.5'
+  s.dependency 'Adster', '~> 1.5.4'
   s.static_framework = true
   s.platform = :ios, '13.0'
 

@@ -77,10 +77,10 @@ class BannerWidget extends GetView<BannerController> {
       onAdImpression: () {
         controller.notifySuccess(title: "BannerAd($bannerSize):onAdImpression");
       },
-      onAdRevenuePaid: (double? revenue, String? adUnitId, String? network) {
+      onAdRevenuePaid: (revenue, adUnitId, network, currency, precisionType) {
         controller.notifySuccess(
           title:
-              "BannerAd($bannerSize):onAdRevenuePaid, revenue: $revenue, adUnitId: $adUnitId, network: $network",
+              "BannerAd($bannerSize):onAdRevenuePaid, revenue: $revenue, adUnitId: $adUnitId, network: $network, currency: $currency, precisionType: $precisionType",
         );
       },
     );

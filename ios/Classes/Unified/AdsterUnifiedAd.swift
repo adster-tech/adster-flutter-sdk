@@ -12,6 +12,7 @@ class AdsterUnifiedAd : NSObject{
     private var adLoadChannel: FlutterMethodChannel
     private var nativeAdView: AdsFramework.MediationNativeAd?
     private var bannerAdView: MediationBannerAd?
+    private var customNativeAdView: AdsFramework.MediationNativeCustomFormatAd?
     let headline = UIView()
     let body = UIView()
     let cta = UIView()
@@ -19,6 +20,7 @@ class AdsterUnifiedAd : NSObject{
     var mediaViewByAd: UIView?
     var onNativeAdLoadComplete: ((String,AdsFramework.MediationNativeAd) -> Void)?
     var onBannerAdLoadComplete: ((String, MediationBannerAd) -> Void)?
+    var onCustomNativeAdLoadComplete: ((String, AdsFramework.MediationNativeCustomFormatAd) -> Void)?
     var onAdLoadFailed: ((String) -> Void)?
     
     init(widgetId: String,placementId: String, adClickChannel: FlutterMethodChannel, adLoadChannel: FlutterMethodChannel,publisherProvidedId: String?,customTargetingParams: [String:String]?) {
@@ -45,6 +47,10 @@ class AdsterUnifiedAd : NSObject{
     func bannerAd() -> MediationBannerAd?{
         return self.bannerAdView
     }
+
+    func customNativeAd() -> AdsFramework.MediationNativeCustomFormatAd? {
+        customNativeAdView
+    }
     
     func setMediaViewByAd(mediaView: UIView) {
         self.mediaViewByAd = mediaView
@@ -70,11 +76,20 @@ extension AdsterUnifiedAd: MediationAdDelegate {
 
     func onNativeAdLoaded(nativeAd: any AdsFramework.MediationNativeAd) {
         self.nativeAdView = nativeAd
+        self.nativeAdView?.eventCallbacks = adsterRevenueOnlyCallbacks(
+            widgetId: widgetId,
+            channel: adClickChannel
+        )
         self.onNativeAdLoadComplete?(widgetId,nativeAd)
     }
 
     func onCustomNativeAdLoaded(customNativeAd: any AdsFramework.MediationNativeCustomFormatAd) {
-
+        self.customNativeAdView = customNativeAd
+        self.customNativeAdView?.eventCallbacks = adsterRevenueOnlyCallbacks(
+            widgetId: widgetId,
+            channel: adClickChannel
+        )
+        self.onCustomNativeAdLoadComplete?(widgetId, customNativeAd)
     }
 
     func onAdFailedToLoad(error: AdError) {
@@ -84,6 +99,10 @@ extension AdsterUnifiedAd: MediationAdDelegate {
 
     func onBannerAdLoaded(bannerAd: MediationBannerAd) {
         self.bannerAdView = bannerAd
+        self.bannerAdView?.eventCallbacks = adsterRevenueOnlyCallbacks(
+            widgetId: widgetId,
+            channel: adClickChannel
+        )
         self.onBannerAdLoadComplete?(widgetId,bannerAd)
     }
 }
@@ -99,5 +118,3 @@ extension AdsterUnifiedAd: MediationNativeAdEventDelegate {
         adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId])
     }
 }
-
-

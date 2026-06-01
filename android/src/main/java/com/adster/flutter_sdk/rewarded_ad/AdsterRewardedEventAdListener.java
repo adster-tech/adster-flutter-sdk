@@ -2,11 +2,9 @@ package com.adster.flutter_sdk.rewarded_ad;
 
 import androidx.annotation.NonNull;
 
-import com.adster.sdk.mediation.InterstitialAdEventsListener;
+import com.adster.sdk.mediation.PrecisionType;
 import com.adster.sdk.mediation.Reward;
 import com.adster.sdk.mediation.RewardedAdEventsListener;
-
-import java.util.Map;
 
 abstract public class AdsterRewardedEventAdListener extends RewardedAdEventsListener {
     final String widgetId;
@@ -46,8 +44,8 @@ abstract public class AdsterRewardedEventAdListener extends RewardedAdEventsList
     }
 
     @Override
-    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network) {
-        onAdRevenuePaid(revenue, adUnitId, network, widgetId);
+    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network, @NonNull String currency, @NonNull PrecisionType precisionType) {
+        onAdRevenuePaid(revenue, adUnitId, network, currency, precisionType, widgetId);
     }
 
     abstract public void onAdClicked(@NonNull String widgetId);
@@ -62,5 +60,5 @@ abstract public class AdsterRewardedEventAdListener extends RewardedAdEventsList
 
     abstract public void onVideoStart(@NonNull String widgetId);
 
-    abstract public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String widgetId);
+    abstract public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String currency, @NonNull PrecisionType precisionType, @NonNull String widgetId);
 }

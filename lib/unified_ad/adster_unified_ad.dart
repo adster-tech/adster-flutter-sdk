@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
-import 'package:adster_flutter_sdk/banner/adster_banner_callback_channel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +14,7 @@ class AdsterUnifiedAd extends StatefulWidget {
   final AdsterAdSize bannerAdSize;
   final AdsterBannerAdBuilder onBannerAdLoaded;
   final AdsterNativeAdBuilder onNativeAdLoaded;
+  final AdsterNativeCustomAdBuilder? onCustomNativeAdLoaded;
   final AdsterAdErrorBuilder onFailure;
   final Widget? loadingWidget;
   final AdsterBannerAdCallback? unifiedAdClickCallback;
@@ -26,6 +26,7 @@ class AdsterUnifiedAd extends StatefulWidget {
     required this.onBannerAdLoaded,
     required this.onNativeAdLoaded,
     required this.onFailure,
+    this.onCustomNativeAdLoaded,
     this.loadingWidget,
     this.unifiedAdClickCallback,
   });
@@ -56,11 +57,13 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
           onAdImpression: () {
             widget.unifiedAdClickCallback?.onAdImpression.call();
           },
-          onAdRevenuePaid: (revenue, adUnitId, network) {
+          onAdRevenuePaid: (revenue, adUnitId, network, currency, precisionType) {
             widget.unifiedAdClickCallback?.onAdRevenuePaid.call(
               revenue,
               adUnitId,
               network,
+              currency,
+              precisionType,
             );
           },
         ),
@@ -93,6 +96,24 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
                   );
                 }
                 Map<String, dynamic> data = jsonDecode(snapshot.data);
+                if (data['adType'] == 'customNative') {
+                  if (widget.onCustomNativeAdLoaded == null) {
+                    return widget.onFailure(
+                      AdsterAdsException(
+                        code: 'CUSTOM_NATIVE_BUILDER_MISSING',
+                        message: 'Custom native ad loaded but no builder was supplied.',
+                      ),
+                    );
+                  }
+                  final customAd = AdsterNativeCustomAdData.fromJson(data);
+                  return widget.onCustomNativeAdLoaded!(
+                    customAd,
+                    _getCustomNativeText,
+                    _getCustomNativeImageUrl,
+                    _performCustomNativeClick,
+                    _recordCustomNativeImpression,
+                  );
+                }
                 return widget.onNativeAdLoaded(
                   AdsterMediationNativeAd(
                     body: data['body'],
@@ -146,6 +167,33 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
       'widgetId': widgetId,
     });
     return data;
+  }
+
+  Future<String?> _getCustomNativeText(String assetName) {
+    return _channel.invokeMethod<String>('customNativeGetText', {
+      'widgetId': widgetId,
+      'assetName': assetName,
+    });
+  }
+
+  Future<String?> _getCustomNativeImageUrl(String assetName) {
+    return _channel.invokeMethod<String>('customNativeGetImageUrl', {
+      'widgetId': widgetId,
+      'assetName': assetName,
+    });
+  }
+
+  Future<void> _performCustomNativeClick(String assetName) {
+    return _channel.invokeMethod<void>('customNativePerformClick', {
+      'widgetId': widgetId,
+      'assetName': assetName,
+    });
+  }
+
+  Future<void> _recordCustomNativeImpression() {
+    return _channel.invokeMethod<void>('customNativeRecordImpression', {
+      'widgetId': widgetId,
+    });
   }
 
   Widget _getBannerPlatformWidget() {
@@ -204,7 +252,7 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
 
   @override
   void dispose() {
-    AdsterBannerCallbackChannel.instance.removeWidget(widgetId);
+    AdsterUnifiedCallbackChannel.instance.removeWidget(widgetId);
     super.dispose();
   }
 }

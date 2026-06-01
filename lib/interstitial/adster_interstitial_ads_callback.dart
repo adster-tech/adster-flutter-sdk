@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:adster_flutter_sdk/core/asdter_typedefs.dart';
+import 'package:adster_flutter_sdk/core/adster_revenue.dart';
 
 class AdsterInterstitialAdsCallback {
   final VoidCallback onAdClicked;
@@ -9,12 +10,7 @@ class AdsterInterstitialAdsCallback {
   final VoidCallback onAdClosed;
   final void Function(AdsterAdsException error)?
   onAdFailToPresentFullScreenContentWithError;
-  final Function(
-      double? revenue,
-      String? adUnitId,
-      String? network,
-      )
-  onAdRevenuePaid;
+  final AdsterRevenueCallback onAdRevenuePaid;
 
   AdsterInterstitialAdsCallback({
     required this.onAdClicked,

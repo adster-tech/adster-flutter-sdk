@@ -56,6 +56,35 @@ class AdsterNativeAdBridge : NSObject{
                 }else{
                     result(FlutterError(code: "EMPTY_ARGS", message: "Args not sent", details: nil))
                 }
+            }else if(call.method == "loadCustomNativeAd"){
+                let args = call.arguments as? [String: Any]
+                guard let widgetId = args?["widgetId"] as? String else {
+                    result(FlutterError(code: "MISSING_ARGS", message: "widgetId not sent", details: nil))
+                    return
+                }
+                guard let placement = args?["adPlacementName"] as? String else {
+                    result(FlutterError(code: "MISSING_ARGS", message: "placementId not sent", details: nil))
+                    return
+                }
+                let nativeAd = self.ads[widgetId] ?? AdsterNativeAd(widgetId: widgetId, placementId: placement, adClickChannel: self.adClickChannel, adLoadChannel: self.adLoadChannel, publisherProvidedId: nil, customTargetingParams: nil)
+                self.ads[widgetId] = nativeAd
+                nativeAd.onCustomNativeAdLoadComplete = { widgetId, customNativeAd in
+                    let data: [String: Any] = [
+                        "widgetId": widgetId,
+                        "customFormatId": customNativeAd.getCustomFormatId() ?? "",
+                        "availableAssetNames": customNativeAd.getAvailableAssetNames() ?? []
+                    ]
+                    do {
+                        let jsonData = try JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
+                        result(String(data: jsonData, encoding: .utf8))
+                    } catch {
+                        result(FlutterError(code: "1", message: "Failed to convert dictionary to JSON", details: nil))
+                    }
+                }
+                nativeAd.onAdLoadFailed = { error in
+                    result(FlutterError(code: "1", message: error, details: nil))
+                }
+                nativeAd.loadAd()
             }else if(call.method == "nativeMediaClick"){
                 let args = call.arguments as? [String: Any]
                 if(args != nil){
@@ -70,6 +99,35 @@ class AdsterNativeAdBridge : NSObject{
                 }else{
                     result(FlutterError(code: "EMPTY_ARGS", message: "Args not sent", details: nil))
                 }
+            }else if(call.method == "customNativeGetText"){
+                let args = call.arguments as? [String: Any]
+                let widgetId = args?["widgetId"] as? String
+                let assetName = args?["assetName"] as? String
+                result(assetName.flatMap { self.ads[widgetId ?? ""]?.customNativeAd()?.getText(for: $0) })
+            }else if(call.method == "customNativeGetImageUrl"){
+                let args = call.arguments as? [String: Any]
+                let widgetId = args?["widgetId"] as? String
+                let assetName = args?["assetName"] as? String
+                result(assetName.flatMap { self.ads[widgetId ?? ""]?.customNativeAd()?.getImage(for: $0)?.imageURL?.absoluteString })
+            }else if(call.method == "customNativePerformClick"){
+                let args = call.arguments as? [String: Any]
+                guard let widgetId = args?["widgetId"] as? String,
+                      let assetName = args?["assetName"] as? String,
+                      let customNativeAd = self.ads[widgetId]?.customNativeAd() else {
+                    result(FlutterError(code: "CUSTOM_NATIVE_AD_NOT_LOADED", message: "Custom native ad not loaded", details: nil))
+                    return
+                }
+                customNativeAd.performClick(on: assetName)
+                result(nil)
+            }else if(call.method == "customNativeRecordImpression"){
+                let args = call.arguments as? [String: Any]
+                guard let widgetId = args?["widgetId"] as? String,
+                      let customNativeAd = self.ads[widgetId]?.customNativeAd() else {
+                    result(FlutterError(code: "CUSTOM_NATIVE_AD_NOT_LOADED", message: "Custom native ad not loaded", details: nil))
+                    return
+                }
+                customNativeAd.recordNativeImpression()
+                result(nil)
             }else{
                 result(FlutterMethodNotImplemented)
             }

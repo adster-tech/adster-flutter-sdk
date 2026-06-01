@@ -26,9 +26,7 @@ class AdsterInterstitialAdCallbackChannel {
 
   Future<void> setMethodCallHandler(MethodCall call) async {
     String? widgetId = call.arguments["widgetId"];
-    double? revenue = call.arguments["revenue"];
-    String? adUnitId = call.arguments["adUnitId"];
-    String? network = call.arguments["network"];
+    final revenuePayload = AdsterRevenuePayload.fromMap(call.arguments);
 
     switch (call.method) {
       case 'onAdClicked':
@@ -71,9 +69,11 @@ class AdsterInterstitialAdCallbackChannel {
         if ((widgetId ?? "").isNotEmpty &&
             _widgetMapper.containsKey(widgetId)) {
           _widgetMapper[widgetId]?.onAdRevenuePaid.call(
-            revenue,
-            adUnitId,
-            network,
+            revenuePayload.revenue,
+            revenuePayload.adUnitId,
+            revenuePayload.network,
+            revenuePayload.currency,
+            revenuePayload.precisionType,
           );
         }
         break;

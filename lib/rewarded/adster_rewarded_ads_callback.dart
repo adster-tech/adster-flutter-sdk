@@ -11,7 +11,7 @@ class AdsterRewardedAdCallback {
   final VoidCallback onVideoStart;
   final void Function(AdsterAdsException error)?
   onAdFailToPresentFullScreenContentWithError;
-  final Function(double? revenue, String? adUnitId, String? network)? onAdRevenuePaid;
+  final AdsterRevenueCallback? onAdRevenuePaid;
 
   AdsterRewardedAdCallback({
     required this.onAdClicked,

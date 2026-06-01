@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:adster_flutter_sdk/app_opened_ad/adster_app_opened_ads_callback.dart';
+import 'package:adster_flutter_sdk/core/adster_revenue.dart';
 import 'package:flutter/services.dart';
 
 class AdsterAppOpenedAdCallbackChannel {
@@ -26,9 +27,7 @@ class AdsterAppOpenedAdCallbackChannel {
 
   Future<void> setMethodCallHandler(MethodCall call) async {
     String? widgetId = call.arguments["widgetId"];
-    double? revenue = call.arguments["revenue"];
-    String? adUnitId = call.arguments["adUnitId"];
-    String? network = call.arguments["network"];
+    final revenuePayload = AdsterRevenuePayload.fromMap(call.arguments);
 
     switch (call.method) {
       case 'onAdClicked':
@@ -73,9 +72,11 @@ class AdsterAppOpenedAdCallbackChannel {
         if ((widgetId ?? "").isNotEmpty &&
             _widgetMapper.containsKey(widgetId)) {
           _widgetMapper[widgetId]?.onAdRevenuePaid?.call(
-            revenue,
-            adUnitId,
-            network,
+            revenuePayload.revenue,
+            revenuePayload.adUnitId,
+            revenuePayload.network,
+            revenuePayload.currency,
+            revenuePayload.precisionType,
           );
         }
     }

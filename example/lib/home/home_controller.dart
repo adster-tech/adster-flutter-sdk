@@ -23,8 +23,11 @@ class HomeController extends BaseController {
           errorMessage: "AppOpenedAd:onFailure: ($errorCode) $errorMessage",
         );
       },
-      onAdRevenuePaid: (double? revenue, String? adUnitId, String? network) {
-        notifySuccess(title: "AppOpenedAd:onAdRevenuePaid: $revenue");
+      onAdRevenuePaid: (revenue, adUnitId, network, currency, precisionType) {
+        notifySuccess(
+          title:
+              "AppOpenedAd:onAdRevenuePaid: $revenue $currency $precisionType",
+        );
       },
     );
   }

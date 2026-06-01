@@ -1,3 +1,9 @@
+## 1.2.0
+- Updated Android SDK to version 2.5.1
+- Updated iOS SDK to version 1.5.4
+- Replaced ad revenue callbacks with the new 5-argument signature including currency and precision type
+- Added carousel banner, carousel native, and custom native ad APIs
+
 ## 1.1.9
 - Updated Android SDK to version 2.4.3
 

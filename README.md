@@ -382,6 +382,64 @@ AdsterUnifiedAd(
 )
 ```
 
+### Revenue callback
+
+`onAdRevenuePaid` now receives revenue, ad unit, network, currency, and precision:
+
+```dart
+onAdRevenuePaid: (revenue, adUnitId, network, currency, precisionType) {
+  debugPrint(
+    'revenue=$revenue adUnitId=$adUnitId network=$network '
+    'currency=$currency precisionType=$precisionType',
+  );
+}
+```
+
+### Carousel banner
+
+```dart
+AdsterCarouselBannerAd(
+  adPlacementName: "adster_carousel_banner_test",
+  adSize: AdsterAdSize.medium,
+  onFailure: (error) => Text("Carousel banner not loaded: ${error.message}"),
+)
+```
+
+### Carousel native
+
+```dart
+AdsterCarouselNativeAd(
+  adPlacementName: "adster_carousel_native_test",
+  onAdLoaded: (items) {
+    return PageView(
+      children: items.map((item) => item.mediaView).toList(),
+    );
+  },
+  onFailure: (error) => Text("Carousel native not loaded: ${error.message}"),
+)
+```
+
+### Custom native
+
+```dart
+AdsterNativeCustomAd(
+  adPlacementName: "adster_custom_native_test",
+  onAdLoaded: (ad, getText, getImageUrl, performClick, recordImpression) {
+    recordImpression();
+    return FutureBuilder<String?>(
+      future: getText("Headline"),
+      builder: (context, snapshot) {
+        return InkWell(
+          onTap: () => performClick("Headline"),
+          child: Text(snapshot.data ?? ""),
+        );
+      },
+    );
+  },
+  onFailure: (error) => Text("Custom native not loaded: ${error.message}"),
+)
+```
+
 ## 🔒 License
 
 This project is licensed under the MIT License.  

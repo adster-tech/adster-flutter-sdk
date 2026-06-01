@@ -9,6 +9,10 @@ import androidx.annotation.NonNull;
 import com.adster.flutter_sdk.app_opened_ad.AdsterAppOpenedAdBridge;
 import com.adster.flutter_sdk.banner.AdsterBannerAdBridge;
 import com.adster.flutter_sdk.banner.AdsterBannerAdViewFactory;
+import com.adster.flutter_sdk.carousel.AdsterCarouselBannerAdBridge;
+import com.adster.flutter_sdk.carousel.AdsterCarouselBannerAdViewFactory;
+import com.adster.flutter_sdk.carousel.AdsterCarouselNativeAdBridge;
+import com.adster.flutter_sdk.carousel.AdsterCarouselNativeAdViewFactory;
 import com.adster.flutter_sdk.interstitial_ad.AdsterInterstitialAdBridge;
 import com.adster.flutter_sdk.native_ad.AdsterNativeAdBridge;
 import com.adster.flutter_sdk.native_ad.AdsterNativeAdViewFactory;
@@ -43,6 +47,8 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
     private AdsterBannerAdBridge adsterBannerAdBridge;
     private AdsterAppOpenedAdBridge adsterAppOpenedAdBridge;
     private AdsterUnifiedAdBridge adsterUnifiedAdBridge;
+    private AdsterCarouselBannerAdBridge adsterCarouselBannerAdBridge;
+    private AdsterCarouselNativeAdBridge adsterCarouselNativeAdBridge;
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -90,6 +96,12 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("adster_unified_banner", new AdsterUnifiedBannerAdViewFactory(adsterUnifiedAdBridge));
 
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("adster_unified_native", new AdsterUnifiedNativeAdViewFactory(adsterUnifiedAdBridge));
+
+        adsterCarouselBannerAdBridge = new AdsterCarouselBannerAdBridge(flutterPluginBinding.getBinaryMessenger(), context);
+        flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("adster_carousel_banner", new AdsterCarouselBannerAdViewFactory(adsterCarouselBannerAdBridge));
+
+        adsterCarouselNativeAdBridge = new AdsterCarouselNativeAdBridge(flutterPluginBinding.getBinaryMessenger(), context);
+        flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("adster_carousel_native", new AdsterCarouselNativeAdViewFactory(adsterCarouselNativeAdBridge));
     }
 
 
@@ -113,6 +125,12 @@ public class AdsterSDKPlugin implements FlutterPlugin, ActivityAware {
 
         if (adsterUnifiedAdBridge != null) {
             adsterUnifiedAdBridge.dispose();
+        }
+        if (adsterCarouselBannerAdBridge != null) {
+            adsterCarouselBannerAdBridge.dispose();
+        }
+        if (adsterCarouselNativeAdBridge != null) {
+            adsterCarouselNativeAdBridge.dispose();
         }
     }
 

@@ -10,10 +10,10 @@ class UnifiedController extends BaseController {
       onAdImpression: () {
         notifySuccess(title: "UnifiedAd($bannerSize):onAdImpression");
       },
-      onAdRevenuePaid: (double? revenue, String? adUnitId, String? network) {
+      onAdRevenuePaid: (revenue, adUnitId, network, currency, precisionType) {
         notifySuccess(
           title:
-              "UnifiedAd($bannerSize):onAdRevenuePaid, revenue: $revenue, adUnitId: $adUnitId, network: $network",
+              "UnifiedAd($bannerSize):onAdRevenuePaid, revenue: $revenue, adUnitId: $adUnitId, network: $network, currency: $currency, precisionType: $precisionType",
         );
       },
     );

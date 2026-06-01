@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:adster_flutter_sdk/core/asdter_typedefs.dart';
+import 'package:adster_flutter_sdk/core/adster_constants.dart';
 import 'package:adster_flutter_sdk/native/adster_mediation_native_ad_model.dart';
 import 'package:adster_flutter_sdk/native/adster_native_ad_callback.dart';
 import 'package:adster_flutter_sdk/native/adster_native_callback_channel.dart';
@@ -64,11 +65,15 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
             double? revenue,
             String? adUnitId,
             String? network,
+            String? currency,
+            AdsterPrecisionType? precisionType,
           ) {
             widget.clickCallback?.onAdRevenuePaid?.call(
               revenue,
               adUnitId,
               network,
+              currency,
+              precisionType,
             );
           },
         ),

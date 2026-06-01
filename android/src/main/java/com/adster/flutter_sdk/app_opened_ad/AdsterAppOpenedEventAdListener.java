@@ -5,8 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AppOpenAdEventsListener;
-import com.adster.sdk.mediation.Reward;
-import com.adster.sdk.mediation.RewardedAdEventsListener;
+import com.adster.sdk.mediation.PrecisionType;
 
 abstract public class AdsterAppOpenedEventAdListener extends AppOpenAdEventsListener {
     final String widgetId;
@@ -36,8 +35,8 @@ abstract public class AdsterAppOpenedEventAdListener extends AppOpenAdEventsList
     }
 
     @Override
-    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network) {
-        onAdRevenuePaid(revenue, adUnitId, network, widgetId);
+    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network, @NonNull String currency, @NonNull PrecisionType precisionType) {
+        onAdRevenuePaid(revenue, adUnitId, network, currency, precisionType, widgetId);
     }
 
 
@@ -56,5 +55,5 @@ abstract public class AdsterAppOpenedEventAdListener extends AppOpenAdEventsList
 
     abstract public void onFailure(@Nullable AdError adError, @NonNull String widgetId);
 
-    abstract public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String widgetId);
+    abstract public void onAdRevenuePaid(double v, @NonNull String s, @NonNull String s1, @NonNull String currency, @NonNull PrecisionType precisionType, @NonNull String widgetId);
 }

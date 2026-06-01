@@ -1,0 +1,89 @@
+import Flutter
+import AdsFramework
+
+class AdsterCarouselNativeAdBridge: NSObject {
+    private let adLoadChannel: FlutterMethodChannel
+    let adClickChannel: FlutterMethodChannel
+    private var ads: [String: [MediationNativeAd]] = [:]
+    private var loaders: [String: AdsterCarouselNativeLoader] = [:]
+
+    init(messenger: FlutterBinaryMessenger) {
+        self.adLoadChannel = FlutterMethodChannel(name: "adster.channel:adster_carousel_native", binaryMessenger: messenger)
+        self.adClickChannel = FlutterMethodChannel(name: "adster.channel:adster_native_ad_click", binaryMessenger: messenger)
+        super.init()
+        self.adLoadChannel.setMethodCallHandler { call, result in
+            if call.method == "loadCarouselNative" {
+                let args = call.arguments as? [String: Any]
+                guard let widgetId = args?["widgetId"] as? String,
+                      let placement = args?["adPlacementName"] as? String else {
+                    result(FlutterError(code: "MISSING_ARGS", message: "widgetId or placementId not sent", details: nil))
+                    return
+                }
+                let loader = AdsterCarouselNativeLoader(widgetId: widgetId, placementId: placement, adClickChannel: self.adClickChannel)
+                self.loaders[widgetId] = loader
+                loader.onAdLoadComplete = { widgetId, ads in
+                    self.ads[widgetId] = ads
+                    let payload = ads.map { ad in
+                        [
+                            "body": ad.body ?? "",
+                            "callToAction": ad.callToAction ?? "",
+                            "headLine": ad.headline ?? "",
+                            "imageUrl": ad.icon ?? "",
+                            "logo": ad.icon ?? "",
+                            "overrideClickHandling": ad.overrideClickHandling,
+                            "overrideImpressionHandling": ad.overrideImpressionHandling
+                        ] as [String : Any]
+                    }
+                    do {
+                        let jsonData = try JSONSerialization.data(withJSONObject: payload, options: .prettyPrinted)
+                        result(String(data: jsonData, encoding: .utf8))
+                    } catch {
+                        result(FlutterError(code: "1", message: "Failed to convert dictionary to JSON", details: nil))
+                    }
+                }
+                loader.onAdLoadFailed = { error in
+                    result(FlutterError(code: "1", message: error, details: nil))
+                }
+                loader.loadAd()
+            } else if call.method == "nativeMediaClick" {
+                result("")
+            } else {
+                result(FlutterMethodNotImplemented)
+            }
+        }
+    }
+
+    func getNativeAd(widgetId: String, index: Int) -> MediationNativeAd? {
+        guard let items = ads[widgetId], index >= 0, index < items.count else { return nil }
+        return items[index]
+    }
+}
+
+private class AdsterCarouselNativeLoader: NSObject, MediationAdDelegate {
+    let widgetId: String
+    let placementId: String
+    let adClickChannel: FlutterMethodChannel
+    var onAdLoadComplete: ((String, [MediationNativeAd]) -> Void)?
+    var onAdLoadFailed: ((String) -> Void)?
+
+    init(widgetId: String, placementId: String, adClickChannel: FlutterMethodChannel) {
+        self.widgetId = widgetId
+        self.placementId = placementId
+        self.adClickChannel = adClickChannel
+    }
+
+    func loadAd() {
+        let loader = AdSterAdLoader()
+        loader.delegate = self
+        loader.loadAd(adRequestConfiguration: AdRequestConfiguration(placement: placementId, viewController: UIApplication.shared.windows.first!.rootViewController!))
+    }
+
+    func onCarouselNativeAdLoaded(carouselNativeAd: any MediationCarouselNativeAd) {
+        carouselNativeAd.eventCallbacks = adsterRevenueOnlyCallbacks(widgetId: widgetId, channel: adClickChannel)
+        onAdLoadComplete?(widgetId, carouselNativeAd.ads)
+    }
+
+    func onAdFailedToLoad(error: AdError) {
+        onAdLoadFailed?(error.description ?? "UNKNOWN")
+    }
+}

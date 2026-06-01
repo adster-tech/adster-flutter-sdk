@@ -31,3 +31,23 @@ enum AdsterNativeAdClickComponent {
     return AdsterNativeAdClickComponent.custom(name);
   }
 }
+
+enum AdsterPrecisionType {
+  unknown,
+  estimated,
+  publisherProvided,
+  precise;
+
+  static AdsterPrecisionType? fromName(String? name) {
+    if (name == null || name.isEmpty) {
+      return null;
+    }
+    final normalized = name.replaceAll('_', '').toLowerCase();
+    for (final value in AdsterPrecisionType.values) {
+      if (value.name.toLowerCase() == normalized) {
+        return value;
+      }
+    }
+    return AdsterPrecisionType.unknown;
+  }
+}

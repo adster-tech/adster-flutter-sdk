@@ -28,6 +28,18 @@ public class AdsterSDKPlugin: NSObject, FlutterPlugin {
         let unifiedNativeAdFactory = AdsterUnifiedNativeAdViewFactory(messenger: registrar.messenger(), adBridge: unifiedAdBridge)
         registrar.register(unifiedNativeAdFactory, withId: "adster_unified_native")
 
+        let carouselBannerAdBridge = AdsterCarouselBannerAdBridge(messenger: registrar.messenger())
+        registrar.register(
+            AdsterCarouselBannerAdViewFactory(adBridge: carouselBannerAdBridge),
+            withId: "adster_carousel_banner"
+        )
+
+        let carouselNativeAdBridge = AdsterCarouselNativeAdBridge(messenger: registrar.messenger())
+        registrar.register(
+            AdsterCarouselNativeAdViewFactory(adBridge: carouselNativeAdBridge),
+            withId: "adster_carousel_native"
+        )
+
         _ = AdsterInterstitialAdBridge(messenger: registrar.messenger())
 
         _ = AdsterRewardedAdBridge(messenger: registrar.messenger())

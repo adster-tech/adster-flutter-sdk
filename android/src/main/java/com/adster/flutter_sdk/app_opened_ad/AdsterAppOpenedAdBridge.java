@@ -7,11 +7,13 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.adster.flutter_sdk.core.AdsterRevenueMapper;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
 import com.adster.sdk.mediation.MediationAdListener;
 import com.adster.sdk.mediation.MediationAppOpenAd;
+import com.adster.sdk.mediation.PrecisionType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,13 +69,8 @@ public class AdsterAppOpenedAdBridge implements MethodChannel.MethodCallHandler 
                 }).withAppOpenAdEventsListener(new AdsterAppOpenedEventAdListener(widgetId) {
 
                     @Override
-                    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network, @NonNull String widgetId) {
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("revenue", revenue);
-                        data.put("adUnitId", adUnitId);
-                        data.put("network", network);
-                        data.put("widgetId", widgetId);
-                        clickMethodChannel.invokeMethod("onAdRevenuePaid", data);
+                    public void onAdRevenuePaid(double revenue, @NonNull String adUnitId, @NonNull String network, @NonNull String currency, @NonNull PrecisionType precisionType, @NonNull String widgetId) {
+                        clickMethodChannel.invokeMethod("onAdRevenuePaid", AdsterRevenueMapper.toMap(revenue, adUnitId, network, currency, precisionType, widgetId));
                     }
 
                     @Override

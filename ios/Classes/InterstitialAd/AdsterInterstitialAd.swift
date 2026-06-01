@@ -60,6 +60,10 @@ extension AdsterInterstitialAd: MediationAdDelegate {
 
     func onInterstitialAdLoaded(interstitialAd: any MediationInterstitialAd) {
         self.interstitialAd = interstitialAd
+        self.interstitialAd?.eventCallbacks = adsterRevenueOnlyCallbacks(
+            widgetId: widgetId,
+            channel: adClickChannel
+        )
         self.onAdLoadComplete?(widgetId)
         self.isAdLoaded = true
         print("Interstitial Ad Loaded")
@@ -95,4 +99,3 @@ extension AdsterInterstitialAd: MediationInterstitialAdEventDelegate {
         adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId,])
     }
 }
-

@@ -64,7 +64,10 @@ extension AdsterBannerAd: MediationAdDelegate {
 
     func onBannerAdLoaded(bannerAd: MediationBannerAd) {
         self.bannerAdView = bannerAd
+        self.bannerAdView?.eventCallbacks = adsterRevenueOnlyCallbacks(
+            widgetId: widgetId,
+            channel: adClickChannel
+        )
         self.onAdLoadComplete?(widgetId,bannerAd)
     }
 }
-
