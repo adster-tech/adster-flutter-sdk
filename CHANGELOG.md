@@ -1,3 +1,8 @@
+## 1.2.2
+- Updated iOS SDK (Adster) to version 1.6.7
+- Declared the Google Mobile Ads SDK 13.2 dependency so the `GoogleMobileAds` module resolves for consumer apps (fixes "Module 'GoogleMobileAds' not found")
+- Raised the minimum iOS deployment target to 15.0
+
 ## 1.2.1
 - Updated Android SDK to version 2.6.3
 - Updated iOS SDK to version 1.6.6

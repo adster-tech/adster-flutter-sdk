@@ -3,7 +3,7 @@
 The `adster_flutter_sdk` gives your Flutter app complete monetization support through a single mediation layer. It supports Banner, Native, Custom Native, Interstitial, Rewarded, App Open, Unified, and Carousel ad formats on both Android and iOS, with revenue reporting, click/impression callbacks, and GAM predefined custom targeting.
 
 - **Android** native dependency: `com.adstertech:orchestrationsdk:2.6.3`
-- **iOS** native dependency: `Adster ~> 1.6.6`
+- **iOS** native dependency: `Adster ~> 1.6.7`
 
 If you get stuck at any point, contact [support@adster.tech](mailto:support@adster.tech).
 
