@@ -1,5 +1,6 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:flutter_sdk_example/base_controller.dart';
+import 'package:flutter_sdk_example/targeting_demo.dart';
 
 class InterstitialController extends BaseController {
   ///keeping it global to prevent it from reload again & again
@@ -13,10 +14,15 @@ class InterstitialController extends BaseController {
     interstitialAdFuture = interstitialAds.loadAd(
       adPlacementName: "adster_interstitial_test",
       callback: getInterstitialAdCallback(),
+      // Optional GAM targeting passed with the ad request.
+      customTargetArgs: kDemoCustomTargetArgs,
+      publisherProvidedId: kDemoPublisherProvidedId,
     );
     interstitialAdFuture1 = interstitialAds1.loadAd(
       adPlacementName: "adster_interstitial_test",
       callback: getInterstitialAdCallback(),
+      customTargetArgs: kDemoCustomTargetArgs,
+      publisherProvidedId: kDemoPublisherProvidedId,
     );
     super.onInit();
   }

@@ -66,7 +66,9 @@ class AdsterNativeAdBridge : NSObject{
                     result(FlutterError(code: "MISSING_ARGS", message: "placementId not sent", details: nil))
                     return
                 }
-                let nativeAd = self.ads[widgetId] ?? AdsterNativeAd(widgetId: widgetId, placementId: placement, adClickChannel: self.adClickChannel, adLoadChannel: self.adLoadChannel, publisherProvidedId: nil, customTargetingParams: nil)
+                let publisherProvidedId = args?["publisherProvidedId"] as? String
+                let customTargetingParams = args?["customTargetArgs"] as? [String: String]
+                let nativeAd = self.ads[widgetId] ?? AdsterNativeAd(widgetId: widgetId, placementId: placement, adClickChannel: self.adClickChannel, adLoadChannel: self.adLoadChannel, publisherProvidedId: publisherProvidedId, customTargetingParams: customTargetingParams)
                 self.ads[widgetId] = nativeAd
                 nativeAd.onCustomNativeAdLoadComplete = { widgetId, customNativeAd in
                     let data: [String: Any] = [

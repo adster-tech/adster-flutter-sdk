@@ -17,8 +17,12 @@ class AdsterNativeAd extends StatefulWidget {
   final AdsterAdErrorBuilder onFailure;
   final Widget? loadingWidget;
   final AdsterNativeAdCallback? clickCallback;
-  final String? publisherProvidedIdIOS;
-  final Map<String, String>? customTargetArgsIOS;
+
+  /// Predefined custom targeting values passed with the ad request (GAM only).
+  final Map<String, String>? customTargetArgs;
+
+  /// Publisher provided identifier (PPID) passed with the ad request (GAM only).
+  final String? publisherProvidedId;
 
   const AdsterNativeAd({
     super.key,
@@ -27,8 +31,8 @@ class AdsterNativeAd extends StatefulWidget {
     required this.onFailure,
     this.loadingWidget,
     this.clickCallback,
-    this.customTargetArgsIOS,
-    this.publisherProvidedIdIOS,
+    this.customTargetArgs,
+    this.publisherProvidedId,
   });
 
   @override
@@ -151,6 +155,8 @@ class _AdsterNativeAdState extends State<AdsterNativeAd> {
     dynamic data = await _channel.invokeMethod('loadNativeAd', {
       'adPlacementName': widget.adPlacementName,
       'widgetId': widgetId,
+      'customTargetArgs': widget.customTargetArgs,
+      'publisherProvidedId': widget.publisherProvidedId,
     });
     log(data);
     return data;

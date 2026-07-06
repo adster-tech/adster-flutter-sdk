@@ -13,12 +13,16 @@ class AdsterAppOpenedAds {
 
   var key = UniqueKey();
   String? placemenId;
+  Map<String, String>? _customTargetArgs;
+  String? _publisherProvidedId;
 
   AdsterAppOpenedAds();
 
   Future<dynamic> loadAd({
     required String adPlacementName,
     AdsterAppOpenedAdCallback? callback,
+    Map<String, String>? customTargetArgs,
+    String? publisherProvidedId,
   }) async {
     if (callback != null) {
       AdsterAppOpenedAdCallbackChannel.instance.registerWidget(
@@ -27,9 +31,13 @@ class AdsterAppOpenedAds {
       );
     }
     placemenId = adPlacementName;
+    _customTargetArgs = customTargetArgs;
+    _publisherProvidedId = publisherProvidedId;
     var response = await _channel.invokeMethod('loadAppOpenedAd', {
       'adPlacementName': adPlacementName,
       'widgetId': key.toString(),
+      'customTargetArgs': customTargetArgs,
+      'publisherProvidedId': publisherProvidedId,
     });
     log(response);
     return response;
@@ -39,6 +47,8 @@ class AdsterAppOpenedAds {
     var response = await _channel.invokeMethod('loadAppOpenedAd', {
       'adPlacementName': placemenId,
       'widgetId': key.toString(),
+      'customTargetArgs': _customTargetArgs,
+      'publisherProvidedId': _publisherProvidedId,
     });
     return response;
   }

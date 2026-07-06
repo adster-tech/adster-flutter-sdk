@@ -19,6 +19,12 @@ class AdsterUnifiedAd extends StatefulWidget {
   final Widget? loadingWidget;
   final AdsterBannerAdCallback? unifiedAdClickCallback;
 
+  /// Predefined custom targeting values passed with the ad request (GAM only).
+  final Map<String, String>? customTargetArgs;
+
+  /// Publisher provided identifier (PPID) passed with the ad request (GAM only).
+  final String? publisherProvidedId;
+
   const AdsterUnifiedAd({
     super.key,
     required this.adPlacementName,
@@ -29,6 +35,8 @@ class AdsterUnifiedAd extends StatefulWidget {
     this.onCustomNativeAdLoaded,
     this.loadingWidget,
     this.unifiedAdClickCallback,
+    this.customTargetArgs,
+    this.publisherProvidedId,
   });
 
   @override
@@ -165,6 +173,8 @@ class _AdsterUnifiedAdState extends State<AdsterUnifiedAd> {
     dynamic data = await _channel.invokeMethod('loadUnified', {
       'adPlacementName': widget.adPlacementName,
       'widgetId': widgetId,
+      'customTargetArgs': widget.customTargetArgs,
+      'publisherProvidedId': widget.publisherProvidedId,
     });
     return data;
   }

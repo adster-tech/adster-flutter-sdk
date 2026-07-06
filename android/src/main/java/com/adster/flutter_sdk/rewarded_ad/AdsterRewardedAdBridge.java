@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 
 import com.adster.flutter_sdk.core.AdsterJSONDataMapper;
 import com.adster.flutter_sdk.core.AdsterRevenueMapper;
+import com.adster.flutter_sdk.core.AdsterTargetingUtils;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdEventsListener;
 import com.adster.sdk.mediation.AdRequestConfiguration;
@@ -56,7 +57,7 @@ public class AdsterRewardedAdBridge implements MethodChannel.MethodCallHandler {
             String widgetId = call.argument("widgetId");
             Log.d("AdsterRewardedAd", "loadRewardedAd: " + adPlacementName + " widgetId: " + widgetId);
             if (adPlacementName != null && widgetId != null) {
-                AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, adPlacementName).build();
+                AdRequestConfiguration configuration = AdsterTargetingUtils.buildConfiguration(context, call, adPlacementName);
                 AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
                     @Override
                     public void onRewardedAdLoaded(@NonNull MediationRewardedAd ad) {

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
 import com.adster.flutter_sdk.core.AdsterJSONDataMapper;
 import com.adster.flutter_sdk.core.AdsterRevenueMapper;
+import com.adster.flutter_sdk.core.AdsterTargetingUtils;
 import com.adster.flutter_sdk.native_ad.AdsterNativeEventAdListener;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdRequestConfiguration;
@@ -48,7 +49,7 @@ public class AdsterCarouselNativeAdBridge extends AdsterBaseAdBridge {
             String placementId = call.argument("adPlacementName");
             String widgetId = call.argument("widgetId");
             if (placementId != null && widgetId != null) {
-                AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, placementId).build();
+                AdRequestConfiguration configuration = AdsterTargetingUtils.buildConfiguration(context, call, placementId);
                 AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
                     @Override
                     public void onCarouselNativeAdLoaded(@NonNull MediationCarouselNativeAd ad) {

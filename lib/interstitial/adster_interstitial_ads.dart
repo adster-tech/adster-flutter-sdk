@@ -12,12 +12,16 @@ class AdsterInterstitialAds {
   );
   var key = UniqueKey();
   String? placemenId;
+  Map<String, String>? _customTargetArgs;
+  String? _publisherProvidedId;
 
   AdsterInterstitialAds();
 
   Future<dynamic> loadAd({
     required String adPlacementName,
     AdsterInterstitialAdsCallback? callback,
+    Map<String, String>? customTargetArgs,
+    String? publisherProvidedId,
   }) async {
     if (callback != null) {
       AdsterInterstitialAdCallbackChannel.instance.registerWidget(
@@ -26,9 +30,13 @@ class AdsterInterstitialAds {
       );
     }
     placemenId = adPlacementName;
+    _customTargetArgs = customTargetArgs;
+    _publisherProvidedId = publisherProvidedId;
     var response = await _channel.invokeMethod('loadInterstitialAd', {
       'adPlacementName': adPlacementName,
       'widgetId': key.toString(),
+      'customTargetArgs': customTargetArgs,
+      'publisherProvidedId': publisherProvidedId,
     });
     return response;
   }
@@ -37,6 +45,8 @@ class AdsterInterstitialAds {
     var response = await _channel.invokeMethod('loadInterstitialAd', {
       'adPlacementName': placemenId,
       'widgetId': key.toString(),
+      'customTargetArgs': _customTargetArgs,
+      'publisherProvidedId': _publisherProvidedId,
     });
     return response;
   }

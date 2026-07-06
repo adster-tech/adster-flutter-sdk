@@ -12,6 +12,12 @@ class AdsterBannerAd extends StatefulWidget {
   final Widget? loadingWidget;
   final AdsterBannerAdCallback? clickCallback;
 
+  /// Predefined custom targeting values passed with the ad request (GAM only).
+  final Map<String, String>? customTargetArgs;
+
+  /// Publisher provided identifier (PPID) passed with the ad request (GAM only).
+  final String? publisherProvidedId;
+
   const AdsterBannerAd({
     super.key,
     required this.adPlacementName,
@@ -20,6 +26,8 @@ class AdsterBannerAd extends StatefulWidget {
     required this.onFailure,
     this.loadingWidget,
     this.clickCallback,
+    this.customTargetArgs,
+    this.publisherProvidedId,
   });
 
   @override
@@ -112,6 +120,8 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
     dynamic data = await _channel.invokeMethod('loadBanner', {
       'adPlacementName': widget.adPlacementName,
       'widgetId': widgetId,
+      'customTargetArgs': widget.customTargetArgs,
+      'publisherProvidedId': widget.publisherProvidedId,
     });
     return data;
   }

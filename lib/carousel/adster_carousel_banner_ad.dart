@@ -15,6 +15,12 @@ class AdsterCarouselBannerAd extends StatefulWidget {
   final Widget? loadingWidget;
   final AdsterBannerAdCallback? callback;
 
+  /// Predefined custom targeting values passed with the ad request (GAM only).
+  final Map<String, String>? customTargetArgs;
+
+  /// Publisher provided identifier (PPID) passed with the ad request (GAM only).
+  final String? publisherProvidedId;
+
   const AdsterCarouselBannerAd({
     super.key,
     required this.adPlacementName,
@@ -23,6 +29,8 @@ class AdsterCarouselBannerAd extends StatefulWidget {
     this.onAdLoaded,
     this.loadingWidget,
     this.callback,
+    this.customTargetArgs,
+    this.publisherProvidedId,
   });
 
   @override
@@ -54,6 +62,8 @@ class _AdsterCarouselBannerAdState extends State<AdsterCarouselBannerAd> {
     final count = await _channel.invokeMethod<int>('loadCarouselBanner', {
       'adPlacementName': widget.adPlacementName,
       'widgetId': widgetId,
+      'customTargetArgs': widget.customTargetArgs,
+      'publisherProvidedId': widget.publisherProvidedId,
     });
     return count ?? 0;
   }

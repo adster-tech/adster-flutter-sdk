@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.adster.flutter_sdk.core.AdsterRevenueMapper;
+import com.adster.flutter_sdk.core.AdsterTargetingUtils;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
@@ -47,7 +48,7 @@ public class AdsterAppOpenedAdBridge implements MethodChannel.MethodCallHandler 
             String widgetId = call.argument("widgetId");
             Log.d("AdsterAppOpenedAd", "loadAppOpenedAd: " + adPlacementName + " widgetId: " + widgetId);
             if (adPlacementName != null && widgetId != null) {
-                AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, adPlacementName).build();
+                AdRequestConfiguration configuration = AdsterTargetingUtils.buildConfiguration(context, call, adPlacementName);
                 AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
 
                     @Override

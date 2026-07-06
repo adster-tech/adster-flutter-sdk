@@ -1,5 +1,6 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:flutter_sdk_example/base_controller.dart';
+import 'package:flutter_sdk_example/targeting_demo.dart';
 
 class RewardedController extends BaseController {
   ///keeping it global to prevent it from reload again & again
@@ -11,6 +12,9 @@ class RewardedController extends BaseController {
     rewardAdFuture = rewardedAds.loadAd(
       adPlacementName: "adster_rewarded_test",
       callback: getRewardedAdCallback(),
+      // Optional GAM targeting passed with the ad request.
+      customTargetArgs: kDemoCustomTargetArgs,
+      publisherProvidedId: kDemoPublisherProvidedId,
     );
     super.onInit();
   }

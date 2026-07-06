@@ -22,7 +22,9 @@ class AdsterCarouselBannerAdBridge: NSObject {
                 result(FlutterError(code: "MISSING_ARGS", message: "widgetId or placementId not sent", details: nil))
                 return
             }
-            let loader = AdsterCarouselBannerLoader(widgetId: widgetId, placementId: placement, adClickChannel: self.adClickChannel)
+            let publisherProvidedId = args?["publisherProvidedId"] as? String
+            let customTargetingParams = args?["customTargetArgs"] as? [String: String]
+            let loader = AdsterCarouselBannerLoader(widgetId: widgetId, placementId: placement, adClickChannel: self.adClickChannel, publisherProvidedId: publisherProvidedId, customTargetingParams: customTargetingParams)
             self.loaders[widgetId] = loader
             loader.onAdLoadComplete = { widgetId, ads in
                 self.ads[widgetId] = ads
@@ -45,19 +47,23 @@ private class AdsterCarouselBannerLoader: NSObject, MediationAdDelegate {
     let widgetId: String
     let placementId: String
     let adClickChannel: FlutterMethodChannel
+    let publisherProvidedId: String?
+    let customTargetingParams: [String: String]?
     var onAdLoadComplete: ((String, [MediationBannerAd]) -> Void)?
     var onAdLoadFailed: ((String) -> Void)?
 
-    init(widgetId: String, placementId: String, adClickChannel: FlutterMethodChannel) {
+    init(widgetId: String, placementId: String, adClickChannel: FlutterMethodChannel, publisherProvidedId: String?, customTargetingParams: [String: String]?) {
         self.widgetId = widgetId
         self.placementId = placementId
         self.adClickChannel = adClickChannel
+        self.publisherProvidedId = publisherProvidedId
+        self.customTargetingParams = customTargetingParams
     }
 
     func loadAd() {
         let loader = AdSterAdLoader()
         loader.delegate = self
-        loader.loadAd(adRequestConfiguration: AdRequestConfiguration(placement: placementId, viewController: UIApplication.shared.windows.first!.rootViewController!))
+        loader.loadAd(adRequestConfiguration: AdRequestConfiguration(placement: placementId, viewController: UIApplication.shared.windows.first!.rootViewController!, publisherProvidedId: publisherProvidedId ?? nil, customTargetingValues: customTargetingParams ?? [:]))
     }
 
     func onCarouselBannerAdLoaded(carouselBannerAd: any MediationCarouselBannerAd) {

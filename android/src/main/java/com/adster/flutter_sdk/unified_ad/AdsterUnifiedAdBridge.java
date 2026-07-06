@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
 import com.adster.flutter_sdk.core.AdsterJSONDataMapper;
 import com.adster.flutter_sdk.core.AdsterRevenueMapper;
+import com.adster.flutter_sdk.core.AdsterTargetingUtils;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
@@ -55,7 +56,7 @@ public class AdsterUnifiedAdBridge extends AdsterBaseAdBridge {
             String widgetId = call.argument("widgetId");
             Log.d("AdsterUnifiedAds", "loadUnified: " + placementId + " widgetId: " + widgetId);
             if (placementId != null && widgetId != null) {
-                AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, placementId).build();
+                AdRequestConfiguration configuration = AdsterTargetingUtils.buildConfiguration(context, call, placementId);
                 AdSterAdLoader.Companion.builder().withAdsListener(new AdsterUnifiedMediationAdListener(widgetId) {
                     @Override
                     public void onBannerAdLoaded(@NonNull MediationBannerAd mediationBannerAd, @NonNull String widgetId) {

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
 import com.adster.flutter_sdk.core.AdsterRevenueMapper;
+import com.adster.flutter_sdk.core.AdsterTargetingUtils;
 import com.adster.sdk.mediation.AdError;
 import com.adster.sdk.mediation.AdRequestConfiguration;
 import com.adster.sdk.mediation.AdSterAdLoader;
@@ -44,7 +45,7 @@ public class AdsterBannerAdBridge extends AdsterBaseAdBridge {
             String widgetId = call.argument("widgetId");
             Log.d("AdsterBannerAds", "loadBanner: " + placementId + " widgetId: " + widgetId);
             if (placementId != null && widgetId != null) {
-                AdRequestConfiguration configuration = AdRequestConfiguration.Companion.builder(context, placementId).build();
+                AdRequestConfiguration configuration = AdsterTargetingUtils.buildConfiguration(context, call, placementId);
                 AdSterAdLoader.Companion.builder().withAdsListener(new MediationAdListener() {
                     @Override
                     public void onBannerAdLoaded(@NonNull MediationBannerAd ad) {

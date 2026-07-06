@@ -1,6 +1,7 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sdk_example/targeting_demo.dart';
 import 'package:get/get.dart';
 
 import 'native_controller.dart';
@@ -20,6 +21,9 @@ class NativeWidget extends GetView<NativeController> {
               margin: EdgeInsets.symmetric(horizontal: 15),
               child: AdsterNativeAd(
                 adPlacementName: "adster_native_test",
+                // Optional GAM targeting passed with the ad request.
+                customTargetArgs: kDemoCustomTargetArgs,
+                publisherProvidedId: kDemoPublisherProvidedId,
                 onAdLoaded: (value, widget, clickHandler) {
                   return SizedBox(
                     height: 200,

@@ -1,6 +1,7 @@
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sdk_example/targeting_demo.dart';
 import 'package:flutter_sdk_example/unified/unified_controller.dart';
 import 'package:get/get.dart';
 
@@ -15,6 +16,9 @@ class UnifiedWidget extends GetView<UnifiedController> {
         child: AdsterUnifiedAd(
           adPlacementName: "adster_unified_test",
           bannerAdSize: AdsterAdSize.medium,
+          // Optional GAM targeting passed with the ad request.
+          customTargetArgs: kDemoCustomTargetArgs,
+          publisherProvidedId: kDemoPublisherProvidedId,
           unifiedAdClickCallback: controller.getUnifiedAdCallback(
             AdsterAdSize.medium.toString(),
           ),

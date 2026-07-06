@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sdk_example/home/home_controller.dart';
 import 'package:flutter_sdk_example/routes/app_routes.dart';
+import 'package:flutter_sdk_example/targeting_demo.dart';
 import 'package:get/get.dart';
 
 class HomeWidget extends GetView<HomeController> {
@@ -48,6 +49,9 @@ class HomeWidget extends GetView<HomeController> {
                       .loadAd(
                         adPlacementName: "adster_appopen_test",
                         callback: controller.getAppOpenedAdCallback(),
+                        // Optional GAM targeting passed with the ad request.
+                        customTargetArgs: kDemoCustomTargetArgs,
+                        publisherProvidedId: kDemoPublisherProvidedId,
                       )
                       .then((value) {
                         controller.notifySuccess(

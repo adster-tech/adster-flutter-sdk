@@ -1,3 +1,10 @@
+## 1.2.1
+- Updated Android SDK to version 2.6.3
+- Updated iOS SDK to version 1.6.6
+- Added predefined custom targeting (`customTargetArgs`) and publisher provided id (`publisherProvidedId`) support to every ad format on both Android and iOS
+- Renamed the native ad's `customTargetArgsIOS`/`publisherProvidedIdIOS` params to the cross-platform `customTargetArgs`/`publisherProvidedId`
+- Updated the example app to demonstrate targeting across all formats and rewrote the README integration guide
+
 ## 1.2.0
 - Updated Android SDK to version 2.5.1
 - Updated iOS SDK to version 1.5.4

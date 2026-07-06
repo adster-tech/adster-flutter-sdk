@@ -23,6 +23,12 @@ class AdsterNativeCustomAd extends StatefulWidget {
   final Widget? loadingWidget;
   final AdsterNativeAdCallback? callback;
 
+  /// Predefined custom targeting values passed with the ad request (GAM only).
+  final Map<String, String>? customTargetArgs;
+
+  /// Publisher provided identifier (PPID) passed with the ad request (GAM only).
+  final String? publisherProvidedId;
+
   const AdsterNativeCustomAd({
     super.key,
     required this.adPlacementName,
@@ -30,6 +36,8 @@ class AdsterNativeCustomAd extends StatefulWidget {
     required this.onFailure,
     this.loadingWidget,
     this.callback,
+    this.customTargetArgs,
+    this.publisherProvidedId,
   });
 
   @override
@@ -60,6 +68,8 @@ class _AdsterNativeCustomAdState extends State<AdsterNativeCustomAd> {
     final data = await _channel.invokeMethod('loadCustomNativeAd', {
       'adPlacementName': widget.adPlacementName,
       'widgetId': widgetId,
+      'customTargetArgs': widget.customTargetArgs,
+      'publisherProvidedId': widget.publisherProvidedId,
     });
     final decoded =
         data is String ? jsonDecode(data) as Map<String, dynamic> : data;
