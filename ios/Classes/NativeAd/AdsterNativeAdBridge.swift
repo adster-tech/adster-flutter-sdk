@@ -110,7 +110,7 @@ class AdsterNativeAdBridge : NSObject{
                 let args = call.arguments as? [String: Any]
                 let widgetId = args?["widgetId"] as? String
                 let assetName = args?["assetName"] as? String
-                result(assetName.flatMap { self.ads[widgetId ?? ""]?.customNativeAd()?.getImage(for: $0)?.imageURL?.absoluteString })
+                result(assetName.flatMap { (self.ads[widgetId ?? ""]?.customNativeAd() as? AdsFramework.MediationNativeCustomFormatAdGAM)?.getImage(for: $0)?.imageURL?.absoluteString })
             }else if(call.method == "customNativePerformClick"){
                 let args = call.arguments as? [String: Any]
                 guard let widgetId = args?["widgetId"] as? String,

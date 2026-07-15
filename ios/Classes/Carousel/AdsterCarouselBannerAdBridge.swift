@@ -71,6 +71,47 @@ private class AdsterCarouselBannerLoader: NSObject, MediationAdDelegate {
         onAdLoadComplete?(widgetId, carouselBannerAd.ads)
     }
 
+    func onBannerAdLoaded(bannerAd: any AdsFramework.MediationBannerAd) {
+    }
+
+    func onInterstitialAdLoaded(interstitialAd: any AdsFramework.MediationInterstitialAd) {
+    }
+
+    func onRewardedAdLoaded(rewardedAd: any AdsFramework.MediationRewardedAd) {
+    }
+
+    func onRewardedInterstitialAdLoaded(rewardedInterstitialAd: any AdsFramework.MediationRewardedInterstitialAd) {
+    }
+
+    func onNativeAdLoaded(nativeAd: any AdsFramework.MediationNativeAd) {
+    }
+
+    func onNativeRewardAdLoaded(nativeRewardAd: any AdsFramework.MediationNativeRewardAd) {
+    }
+
+    func onCarouselNativeAdLoaded(carouselNativeAd: any AdsFramework.MediationCarouselNativeAd) {
+    }
+
+    func onCustomNativeAdLoaded(customNativeAd: any AdsFramework.MediationNativeCustomFormatAd) {
+    }
+
+    func onAppOpenAdLoaded(appOpenAd: any AdsFramework.MediationAppOpenAd) {
+    }
+
+    func onAdRevenuePaid(revenue: Double, adUnitId: String, network: String, currency: String, precisionType: AdsFramework.PrecisionType) {
+        adClickChannel.invokeMethod(
+            "onAdRevenuePaid",
+            arguments: adsterRevenueArguments(
+                widgetId: widgetId,
+                revenue: revenue,
+                adUnitId: adUnitId,
+                network: network,
+                currency: currency,
+                precisionType: precisionType
+            )
+        )
+    }
+
     func onAdFailedToLoad(error: AdError) {
         onAdLoadFailed?(error.description ?? "UNKNOWN")
     }

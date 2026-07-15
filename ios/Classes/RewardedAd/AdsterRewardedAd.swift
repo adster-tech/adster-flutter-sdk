@@ -38,6 +38,32 @@ class AdsterRewardedAd : NSObject{
 }
 
 extension AdsterRewardedAd: MediationAdDelegate {
+    func onCarouselBannerAdLoaded(carouselBannerAd: any AdsFramework.MediationCarouselBannerAd) {
+    }
+
+    func onNativeRewardAdLoaded(nativeRewardAd: any AdsFramework.MediationNativeRewardAd) {
+    }
+
+    func onCarouselNativeAdLoaded(carouselNativeAd: any AdsFramework.MediationCarouselNativeAd) {
+    }
+
+    func onAppOpenAdLoaded(appOpenAd: any AdsFramework.MediationAppOpenAd) {
+    }
+
+    func onAdRevenuePaid(revenue: Double, adUnitId: String, network: String, currency: String, precisionType: AdsFramework.PrecisionType) {
+        adClickChannel.invokeMethod(
+            "onAdRevenuePaid",
+            arguments: adsterRevenueArguments(
+                widgetId: widgetId,
+                revenue: revenue,
+                adUnitId: adUnitId,
+                network: network,
+                currency: currency,
+                precisionType: precisionType
+            )
+        )
+    }
+
     func onBannerAdLoaded(bannerAd: any AdsFramework.MediationBannerAd) {
 
     }
@@ -91,6 +117,13 @@ extension AdsterRewardedAd: MediationRewardedAdEventDelegate {
 
     func ad(didFailToPresentFullScreenContentWithError error: AdError) {
         adClickChannel.invokeMethod(String("onAdFailToPresentFullScreenContentWithError"), arguments: ["widgetId":widgetId,"code":"1","message":error.description])
+    }
+
+    func adWillPresentFullScreenContent() {
+    }
+
+    func adDidDismissFullScreenContent() {
+        adClickChannel.invokeMethod(String("onVideoClosed"), arguments: ["widgetId":widgetId,])
     }
 
     func recordRewardedClick() {

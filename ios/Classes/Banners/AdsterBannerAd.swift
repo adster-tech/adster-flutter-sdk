@@ -37,6 +37,32 @@ class AdsterBannerAd : NSObject{
 }
 
 extension AdsterBannerAd: MediationAdDelegate {
+    func onCarouselBannerAdLoaded(carouselBannerAd: any AdsFramework.MediationCarouselBannerAd) {
+    }
+
+    func onNativeRewardAdLoaded(nativeRewardAd: any AdsFramework.MediationNativeRewardAd) {
+    }
+
+    func onCarouselNativeAdLoaded(carouselNativeAd: any AdsFramework.MediationCarouselNativeAd) {
+    }
+
+    func onAppOpenAdLoaded(appOpenAd: any AdsFramework.MediationAppOpenAd) {
+    }
+
+    func onAdRevenuePaid(revenue: Double, adUnitId: String, network: String, currency: String, precisionType: AdsFramework.PrecisionType) {
+        adClickChannel.invokeMethod(
+            "onAdRevenuePaid",
+            arguments: adsterRevenueArguments(
+                widgetId: widgetId,
+                revenue: revenue,
+                adUnitId: adUnitId,
+                network: network,
+                currency: currency,
+                precisionType: precisionType
+            )
+        )
+    }
+
     func onInterstitialAdLoaded(interstitialAd: any AdsFramework.MediationInterstitialAd) {
 
     }

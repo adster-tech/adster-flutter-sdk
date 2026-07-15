@@ -1,7 +1,13 @@
+## 1.2.3
+- Updated Android SDK to version 2.6.4
+- Updated iOS SDK (Adster) to version 1.6.8
+- Added compatibility for the newer iOS mediation delegate surface
+
 ## 1.2.2
 - Updated iOS SDK (Adster) to version 1.6.7
 - Declared the Google Mobile Ads SDK 13.2 dependency so the `GoogleMobileAds` module resolves for consumer apps (fixes "Module 'GoogleMobileAds' not found")
 - Raised the minimum iOS deployment target to 15.0
+- Adapted the custom native (custom format) image lookup to Adster 1.6.7, where `getImage(for:)` moved to the `MediationNativeCustomFormatAdGAM` protocol
 
 ## 1.2.1
 - Updated Android SDK to version 2.6.3
