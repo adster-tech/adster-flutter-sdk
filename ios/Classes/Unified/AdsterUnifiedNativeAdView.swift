@@ -38,9 +38,9 @@ class AdsterUnifiedNativeAdView: NSObject, FlutterPlatformView{
 
     private func createNativeAdView(nativeAd: AdsFramework.MediationNativeAd) -> UIView {
         let adView = MediationNativeAdView()
-        adView.backgroundColor = UIColor.clear
+        adView.backgroundColor = UIColor(red: 0.015, green: 0.022, blue: 0.035, alpha: 1)
         adView.layer.borderWidth = 1
-        adView.layer.borderColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
+        adView.layer.borderColor = UIColor(red: 0.0, green: 0.62, blue: 0.95, alpha: 0.75).cgColor
         adView.layer.cornerRadius = 8
         adView.clipsToBounds = true
 
@@ -52,41 +52,47 @@ class AdsterUnifiedNativeAdView: NSObject, FlutterPlatformView{
         mediaContainer.translatesAutoresizingMaskIntoConstraints = false
         mediaContainer.clipsToBounds = true
         mediaContainer.layer.cornerRadius = 6
+        mediaContainer.backgroundColor = UIColor.black.withAlphaComponent(0.35)
 
         let labelView = UILabel()
         labelView.translatesAutoresizingMaskIntoConstraints = false
         labelView.text = "Ad"
-        labelView.font = .systemFont(ofSize: 11, weight: .medium)
-        labelView.textColor = .systemBlue
+        labelView.font = .systemFont(ofSize: 11, weight: .semibold)
+        labelView.textColor = UIColor(red: 0.30, green: 0.86, blue: 1.0, alpha: 1)
+        labelView.backgroundColor = UIColor(red: 0.0, green: 0.42, blue: 0.70, alpha: 0.22)
+        labelView.layer.cornerRadius = 4
+        labelView.clipsToBounds = true
+        labelView.textAlignment = .center
 
         let headlineLabel = UILabel()
         headlineLabel.translatesAutoresizingMaskIntoConstraints = false
         headlineLabel.text = nativeAd.headline
-        headlineLabel.font = .systemFont(ofSize: 15, weight: .semibold)
+        headlineLabel.font = .systemFont(ofSize: 17, weight: .semibold)
+        headlineLabel.textColor = UIColor.white
         headlineLabel.numberOfLines = 2
 
         let bodyLabel = UILabel()
         bodyLabel.translatesAutoresizingMaskIntoConstraints = false
         bodyLabel.text = nativeAd.body
-        bodyLabel.font = .systemFont(ofSize: 13)
-        bodyLabel.textColor = .secondaryLabel
+        bodyLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        bodyLabel.textColor = UIColor(red: 0.78, green: 0.84, blue: 0.92, alpha: 1)
         bodyLabel.numberOfLines = 2
 
         let ctaButton = UIButton(type: .system)
         ctaButton.translatesAutoresizingMaskIntoConstraints = false
         ctaButton.setTitle(nativeAd.callToAction, for: .normal)
-        ctaButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        ctaButton.backgroundColor = .systemBlue
-        ctaButton.tintColor = .white
-        ctaButton.layer.cornerRadius = 8
-        ctaButton.contentEdgeInsets = UIEdgeInsets(top: 7, left: 12, bottom: 7, right: 12)
+        ctaButton.titleLabel?.font = .systemFont(ofSize: 15, weight: .bold)
+        ctaButton.backgroundColor = UIColor(red: 0.0, green: 0.52, blue: 1.0, alpha: 1)
+        ctaButton.tintColor = UIColor.white
+        ctaButton.layer.cornerRadius = 10
+        ctaButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         ctaButton.isUserInteractionEnabled = false
 
         let textStack = UIStackView(arrangedSubviews: [labelView, headlineLabel, bodyLabel, ctaButton])
         textStack.translatesAutoresizingMaskIntoConstraints = false
         textStack.axis = .vertical
         textStack.alignment = .leading
-        textStack.spacing = 6
+        textStack.spacing = 7
 
         contentView.addSubview(mediaContainer)
         contentView.addSubview(textStack)
@@ -106,7 +112,9 @@ class AdsterUnifiedNativeAdView: NSObject, FlutterPlatformView{
             textStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             textStack.topAnchor.constraint(equalTo: contentView.topAnchor),
             textStack.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
-            ctaButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 34)
+            labelView.widthAnchor.constraint(equalToConstant: 28),
+            labelView.heightAnchor.constraint(equalToConstant: 18),
+            ctaButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 38)
         ])
 
         adView.bodyView = bodyLabel

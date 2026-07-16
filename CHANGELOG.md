@@ -1,3 +1,6 @@
+## 1.2.5
+- Improved iOS native and unified native ad card styling with explicit dark background, readable text colors, stronger CTA styling, and better media/card contrast.
+
 ## 1.2.4
 - Fixed iOS native and unified native ad clicks by rendering a registered `MediationNativeAdView` instead of exposing only the media view.
 - Fixed iOS native ad rendering in compact Flutter layouts by using a programmatic native ad view sized for the Flutter slot.
