@@ -26,16 +26,101 @@ class AdsterUnifiedNativeAdView: NSObject, FlutterPlatformView{
             if self.widgetId != nil {
                 if let nativeAd =  adBridge.getUnifiedAd(widgetId: widgetId!){
                     print("LandingURL: \(nativeAd.nativeAd()?.landingUrl ?? "nil")")
-                    //_view.addSubview(nativeAd.mediaView()?.mediaView ?? label)
                     nativeAd.nativeAd()?.eventDelegate = self
-                    self._view = nativeAd.nativeAd()?.mediaView ?? label
-                    nativeAd.cta.frame = _view.bounds
-                    self._view.addSubview(nativeAd.cta)
-                    nativeAd.nativeAd()?.registerAdView(_view, clickableAssetViews: ["mediaView":nativeAd.nativeAd()?.mediaView, "headline":nativeAd.headline,"body":nativeAd.body,"cta":nativeAd.cta,"logo":nativeAd.logo])
-                    nativeAd.setMediaViewByAd(mediaView: _view)
+                    if let mediationNativeAd = nativeAd.nativeAd() {
+                        self._view = createNativeAdView(nativeAd: mediationNativeAd)
+                        nativeAd.setMediaViewByAd(mediaView: self._view)
+                    }
                 }
             }
         }
+    }
+
+    private func createNativeAdView(nativeAd: AdsFramework.MediationNativeAd) -> UIView {
+        let adView = MediationNativeAdView()
+        adView.backgroundColor = UIColor.clear
+        adView.layer.borderWidth = 1
+        adView.layer.borderColor = UIColor.systemBlue.withAlphaComponent(0.5).cgColor
+        adView.layer.cornerRadius = 8
+        adView.clipsToBounds = true
+
+        let contentView = UIView()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        adView.addSubview(contentView)
+
+        let mediaContainer = UIView()
+        mediaContainer.translatesAutoresizingMaskIntoConstraints = false
+        mediaContainer.clipsToBounds = true
+        mediaContainer.layer.cornerRadius = 6
+
+        let labelView = UILabel()
+        labelView.translatesAutoresizingMaskIntoConstraints = false
+        labelView.text = "Ad"
+        labelView.font = .systemFont(ofSize: 11, weight: .medium)
+        labelView.textColor = .systemBlue
+
+        let headlineLabel = UILabel()
+        headlineLabel.translatesAutoresizingMaskIntoConstraints = false
+        headlineLabel.text = nativeAd.headline
+        headlineLabel.font = .systemFont(ofSize: 15, weight: .semibold)
+        headlineLabel.numberOfLines = 2
+
+        let bodyLabel = UILabel()
+        bodyLabel.translatesAutoresizingMaskIntoConstraints = false
+        bodyLabel.text = nativeAd.body
+        bodyLabel.font = .systemFont(ofSize: 13)
+        bodyLabel.textColor = .secondaryLabel
+        bodyLabel.numberOfLines = 2
+
+        let ctaButton = UIButton(type: .system)
+        ctaButton.translatesAutoresizingMaskIntoConstraints = false
+        ctaButton.setTitle(nativeAd.callToAction, for: .normal)
+        ctaButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        ctaButton.backgroundColor = .systemBlue
+        ctaButton.tintColor = .white
+        ctaButton.layer.cornerRadius = 8
+        ctaButton.contentEdgeInsets = UIEdgeInsets(top: 7, left: 12, bottom: 7, right: 12)
+        ctaButton.isUserInteractionEnabled = false
+
+        let textStack = UIStackView(arrangedSubviews: [labelView, headlineLabel, bodyLabel, ctaButton])
+        textStack.translatesAutoresizingMaskIntoConstraints = false
+        textStack.axis = .vertical
+        textStack.alignment = .leading
+        textStack.spacing = 6
+
+        contentView.addSubview(mediaContainer)
+        contentView.addSubview(textStack)
+
+        NSLayoutConstraint.activate([
+            contentView.leadingAnchor.constraint(equalTo: adView.leadingAnchor, constant: 12),
+            contentView.trailingAnchor.constraint(equalTo: adView.trailingAnchor, constant: -12),
+            contentView.topAnchor.constraint(equalTo: adView.topAnchor, constant: 12),
+            contentView.bottomAnchor.constraint(equalTo: adView.bottomAnchor, constant: -12),
+
+            mediaContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            mediaContainer.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            mediaContainer.widthAnchor.constraint(equalToConstant: 132),
+            mediaContainer.heightAnchor.constraint(equalToConstant: 132),
+
+            textStack.leadingAnchor.constraint(equalTo: mediaContainer.trailingAnchor, constant: 12),
+            textStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            textStack.topAnchor.constraint(equalTo: contentView.topAnchor),
+            textStack.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
+            ctaButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 34)
+        ])
+
+        adView.bodyView = bodyLabel
+        adView.headlineView = headlineLabel
+        adView.ctaView = ctaButton
+        adView.mediaView = mediaContainer
+
+        adView.setNativeAd(nativeAd: nativeAd)
+
+        if let mediaView = nativeAd.mediaView {
+            addMediaViewToParentView(childView: mediaView, parentView: mediaContainer)
+        }
+
+        return adView
     }
     
     func addMediaViewToParentView(childView: UIView, parentView: UIView) {

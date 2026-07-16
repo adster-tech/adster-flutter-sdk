@@ -1,3 +1,8 @@
+## 1.2.4
+- Fixed iOS native and unified native ad clicks by rendering a registered `MediationNativeAdView` instead of exposing only the media view.
+- Fixed iOS native ad rendering in compact Flutter layouts by using a programmatic native ad view sized for the Flutter slot.
+- Forwarded iOS native click events through the native and unified bridges and restored click/impression callbacks for native ads.
+
 ## 1.2.3
 - Updated Android SDK to version 2.6.4
 - Updated iOS SDK (Adster) to version 1.6.8

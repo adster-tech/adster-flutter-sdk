@@ -79,9 +79,11 @@ class AdsterUnifiedAdBridge : NSObject{
                 if(args != nil){
                     let widgetId = args?["widgetId"] as? String
                     let componentName = args?["componentName"] as? String
-                    if(widgetId != nil){
-                        //print("nativeMediaClick: widgetId \(String(describing: widgetId)) componentName \(String(describing: componentName))")
+                    if(widgetId != nil && componentName != nil){
+                        self.ads[widgetId ?? ""]?.click(compname: componentName ?? "")
                         result("")
+                    }else if(widgetId != nil){
+                        result(FlutterError(code: "MISSING_ARGS", message: "componentName not sent", details: nil))
                     }else{
                         result(FlutterError(code: "MISSING_ARGS", message: "widgetId not sent", details: nil))
                     }

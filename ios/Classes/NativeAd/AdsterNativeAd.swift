@@ -1,4 +1,5 @@
 import Flutter
+import SafariServices
 import AdsFramework
 
 class AdsterNativeAd : NSObject{
@@ -51,7 +52,23 @@ class AdsterNativeAd : NSObject{
     }
     
     func click(compname: String) {
-        self.mediaViewByAd?.gestureRecognizers?.first?.state = .ended
+        guard let nativeAd = self.nativeAdView else { return }
+
+        guard let landingUrl = nativeAd.landingUrl,
+              let url = URL(string: landingUrl) else {
+            return
+        }
+
+        nativeAd.recordNativeClick()
+        
+        DispatchQueue.main.async {
+            if nativeAd.openUrlInApp {
+                let safariVC = SFSafariViewController(url: url)
+                UIApplication.shared.windows.first?.rootViewController?.present(safariVC, animated: true)
+            } else if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        }
     }
 }
 
@@ -96,9 +113,11 @@ extension AdsterNativeAd: MediationAdDelegate {
 
     func onNativeAdLoaded(nativeAd: any AdsFramework.MediationNativeAd) {
         self.nativeAdView = nativeAd
-        self.nativeAdView?.eventCallbacks = adsterRevenueOnlyCallbacks(
+        self.nativeAdView?.eventCallbacks = adsterEventCallbacks(
             widgetId: widgetId,
-            channel: adClickChannel
+            channel: adClickChannel,
+            clickMethod: "onAdClicked",
+            impressionMethod: "onAdImpression"
         )
         self.onAdLoadComplete?(widgetId,nativeAd)
     }
