@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'adster_flutter_sdk'
-  s.version          = '1.2.3'
+  s.version          = '1.2.6'
   s.summary          = 'Adster Sdk provides you complete ads support for your iOS application'
   s.description      = <<-DESC
 A new Flutter project.

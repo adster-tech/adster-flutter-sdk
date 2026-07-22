@@ -1,3 +1,8 @@
+## 1.2.6
+- Fixed Android native media rendering by sizing the native media host to the Flutter platform view bounds.
+- Aligned Android native image URL serialization with the Flutter `imageUrl` field.
+- Loaded Android native ad logos into the native platform view and hid the logo slot when no logo is available.
+
 ## 1.2.5
 - Improved iOS native and unified native ad card styling with explicit dark background, readable text colors, stronger CTA styling, and better media/card contrast.
 

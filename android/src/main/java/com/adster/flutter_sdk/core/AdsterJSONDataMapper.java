@@ -15,7 +15,7 @@ public class AdsterJSONDataMapper {
         object.put("body", mediationNativeAd.getBody());
         object.put("callToAction", mediationNativeAd.getCallToAction());
         object.put("headLine", mediationNativeAd.getHeadLine());
-        object.put("imageURL", mediationNativeAd.getImageURL());
+        object.put("imageUrl", mediationNativeAd.getImageURL());
         object.put("landingUrl", mediationNativeAd.getLandingUrl());
         object.put("logo", mediationNativeAd.getLogo());
         object.put("overrideClickHandling", mediationNativeAd.getOverrideClickHandling());

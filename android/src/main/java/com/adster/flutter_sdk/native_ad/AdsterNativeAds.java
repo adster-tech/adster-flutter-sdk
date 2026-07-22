@@ -1,6 +1,9 @@
 package com.adster.flutter_sdk.native_ad;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +21,9 @@ import com.adster.sdk.mediation.MediationNativeAdView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import io.flutter.plugin.platform.PlatformView;
 
@@ -26,19 +32,25 @@ public class AdsterNativeAds implements PlatformView {
     private final FrameLayout container;
     final AdsterBaseAdBridge adsterNativeAdBridge;
     private final String widgetId;
+    private final ExecutorService imageLoader = Executors.newSingleThreadExecutor();
 
     public AdsterNativeAds(Context context, String widgetId, AdsterBaseAdBridge adsterNativeAdBridge) {
         this.context = context;
         this.widgetId = widgetId;
         container = new FrameLayout(context);
-        container.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+        container.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         this.adsterNativeAdBridge = adsterNativeAdBridge;
         displayNativeAd(adsterNativeAdBridge.getNativeAd(widgetId));
     }
 
     private void displayNativeAd(MediationNativeAd ad) {
+        if (ad == null) {
+            return;
+        }
+
         // Create AdSter MediationNativeAdView object
         MediationNativeAdView adView = new MediationNativeAdView(context);
+        adView.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
         // Add this layout as a parent to your native ad layout
         View nativeAdView = LayoutInflater.from(context).inflate(R.layout.native_ad_skeleton_container, adView, true);
@@ -56,7 +68,11 @@ public class AdsterNativeAds implements PlatformView {
 
         // If MediaView is present add AdSter's MediaView as a child to given MediaView
         if (ad.getMediaView() != null) {
-            mediaView.addView(ad.getMediaView());
+            View sdkMediaView = ad.getMediaView();
+            if (sdkMediaView.getParent() instanceof android.view.ViewGroup) {
+                ((android.view.ViewGroup) sdkMediaView.getParent()).removeView(sdkMediaView);
+            }
+            mediaView.addView(sdkMediaView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         }
         adView.setBodyView(body);
         adView.setHeadlineView(title);
@@ -65,8 +81,7 @@ public class AdsterNativeAds implements PlatformView {
         adView.setAdvertiserView(info);
         adView.setRatingBarView(ratingBar);
 
-        logo.setVisibility(View.VISIBLE);
-        // Load logo url using any Image loading library (Glide is just an example here)
+        loadLogo(logo, ad.getLogo());
 
         // Set native ad elements with data
         title.setText(ad.getHeadLine());
@@ -90,7 +105,24 @@ public class AdsterNativeAds implements PlatformView {
         adsterNativeAdBridge.setMediationNativeAdView(adView);
         // Ad native ad view to container
         container.removeAllViews();
-        container.addView(adView);
+        container.addView(adView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+    }
+
+    private void loadLogo(ImageView logo, String logoUrl) {
+        if (TextUtils.isEmpty(logoUrl)) {
+            logo.setVisibility(View.GONE);
+            return;
+        }
+
+        logo.setVisibility(View.VISIBLE);
+        imageLoader.execute(() -> {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeStream(new URL(logoUrl).openStream());
+                logo.post(() -> logo.setImageBitmap(bitmap));
+            } catch (Exception ignored) {
+                logo.post(() -> logo.setVisibility(View.GONE));
+            }
+        });
     }
 
     @Nullable
@@ -101,6 +133,7 @@ public class AdsterNativeAds implements PlatformView {
 
     @Override
     public void dispose() {
+        imageLoader.shutdownNow();
         adsterNativeAdBridge.clearWidget(widgetId);
     }
 }
