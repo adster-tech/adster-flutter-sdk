@@ -1,3 +1,8 @@
+## 1.2.7
+- Updated Android SDK to version 2.8.2 and iOS SDK (Adster) to version 1.7.1.
+- Added `List<String>` support alongside single strings in `customTargetArgs` for every Flutter ad API, including reloads.
+- Preserved mixed string/list targeting in the iOS bridge and updated targeting examples.
+
 ## 1.2.6
 - Fixed Android native media rendering by sizing the native media host to the Flutter platform view bounds.
 - Aligned Android native image URL serialization with the Flutter `imageUrl` field.

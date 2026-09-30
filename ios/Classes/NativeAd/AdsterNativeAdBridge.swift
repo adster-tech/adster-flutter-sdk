@@ -21,7 +21,7 @@ class AdsterNativeAdBridge : NSObject{
                         if(placement != nil){
                             print("Received ad load request for placement: \(String(describing: placement))")
                             let publisherProvidedId = args?["publisherProvidedId"] as? String
-                            let customTargetingParams = args?["customTargetArgs"] as? [String: String]
+                            let customTargetingParams = AdsterTargetingUtils.customTargetingValues(from: args?["customTargetArgs"])
                             var nativeAd: AdsterNativeAd?
                             if(self.ads.keys.contains(widgetId ?? "")){
                                 nativeAd = self.ads[widgetId ?? ""] ?? nil
@@ -67,7 +67,7 @@ class AdsterNativeAdBridge : NSObject{
                     return
                 }
                 let publisherProvidedId = args?["publisherProvidedId"] as? String
-                let customTargetingParams = args?["customTargetArgs"] as? [String: String]
+                let customTargetingParams = AdsterTargetingUtils.customTargetingValues(from: args?["customTargetArgs"])
                 let nativeAd = self.ads[widgetId] ?? AdsterNativeAd(widgetId: widgetId, placementId: placement, adClickChannel: self.adClickChannel, adLoadChannel: self.adLoadChannel, publisherProvidedId: publisherProvidedId, customTargetingParams: customTargetingParams)
                 self.ads[widgetId] = nativeAd
                 nativeAd.onCustomNativeAdLoadComplete = { widgetId, customNativeAd in

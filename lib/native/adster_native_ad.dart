@@ -19,7 +19,8 @@ class AdsterNativeAd extends StatefulWidget {
   final AdsterNativeAdCallback? clickCallback;
 
   /// Predefined custom targeting values passed with the ad request (GAM only).
-  final Map<String, String>? customTargetArgs;
+  /// Each value must be a `String` or a `List<String>`.
+  final Map<String, dynamic>? customTargetArgs;
 
   /// Publisher provided identifier (PPID) passed with the ad request (GAM only).
   final String? publisherProvidedId;

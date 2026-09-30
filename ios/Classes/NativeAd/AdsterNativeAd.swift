@@ -8,7 +8,7 @@ class AdsterNativeAd : NSObject{
     private var placementId: String
     private var publisherProvidedId: String?
     var isAdLoaded: Bool = false
-    private var customTargetingParams: [String:String]?
+    private var customTargetingParams: [String: [String]]?
     private var adClickChannel: FlutterMethodChannel
     private var adLoadChannel: FlutterMethodChannel
     private var nativeAdView: AdsFramework.MediationNativeAd?
@@ -22,7 +22,7 @@ class AdsterNativeAd : NSObject{
     var onCustomNativeAdLoadComplete: ((String, AdsFramework.MediationNativeCustomFormatAd) -> Void)?
     var onAdLoadFailed: ((String) -> Void)?
     
-    init(widgetId: String,placementId: String, adClickChannel: FlutterMethodChannel, adLoadChannel: FlutterMethodChannel,publisherProvidedId: String?,customTargetingParams: [String:String]?) {
+    init(widgetId: String,placementId: String, adClickChannel: FlutterMethodChannel, adLoadChannel: FlutterMethodChannel,publisherProvidedId: String?,customTargetingParams: [String: [String]]?) {
         self.widgetId = widgetId
         self.adClickChannel = adClickChannel
         self.adLoadChannel = adLoadChannel

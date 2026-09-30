@@ -21,7 +21,7 @@ class AdsterBannerAdBridge : NSObject{
                         if(placement != nil){
                             print("Received ad load request for placement: \(String(describing: placement))")
                             let publisherProvidedId = args?["publisherProvidedId"] as? String
-                            let customTargetingParams = args?["customTargetArgs"] as? [String: String]
+                            let customTargetingParams = AdsterTargetingUtils.customTargetingValues(from: args?["customTargetArgs"])
                             var nativeAd: AdsterBannerAd?
                             if(self.ads.keys.contains(widgetId ?? "")){
                                 nativeAd = self.ads[widgetId ?? ""] ?? nil

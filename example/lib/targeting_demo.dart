@@ -6,8 +6,8 @@
 /// demand — other networks simply ignore it.
 ///
 /// Replace these with values derived from your own app/user context.
-const Map<String, String> kDemoCustomTargetArgs = <String, String>{
-  'content_category': 'sports',
+const Map<String, dynamic> kDemoCustomTargetArgs = <String, dynamic>{
+  'content_category': ['sports', 'news'],
   'user_tier': 'premium',
 };
 

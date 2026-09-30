@@ -13,15 +13,17 @@ class AdsterRewardedAds {
 
   var key = UniqueKey();
   String? placemenId;
-  Map<String, String>? _customTargetArgs;
+  Map<String, dynamic>? _customTargetArgs;
   String? _publisherProvidedId;
 
   AdsterRewardedAds();
 
+  /// Loads an ad with optional GAM targeting.
+  /// Each [customTargetArgs] value must be a `String` or a `List<String>`.
   Future<dynamic> loadAd({
     required String adPlacementName,
     AdsterRewardedAdCallback? callback,
-    Map<String, String>? customTargetArgs,
+    Map<String, dynamic>? customTargetArgs,
     String? publisherProvidedId,
   }) async {
     if (callback != null) {

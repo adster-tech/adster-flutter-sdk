@@ -23,7 +23,7 @@ class AdsterCarouselBannerAdBridge: NSObject {
                 return
             }
             let publisherProvidedId = args?["publisherProvidedId"] as? String
-            let customTargetingParams = args?["customTargetArgs"] as? [String: String]
+            let customTargetingParams = AdsterTargetingUtils.customTargetingValues(from: args?["customTargetArgs"])
             let loader = AdsterCarouselBannerLoader(widgetId: widgetId, placementId: placement, adClickChannel: self.adClickChannel, publisherProvidedId: publisherProvidedId, customTargetingParams: customTargetingParams)
             self.loaders[widgetId] = loader
             loader.onAdLoadComplete = { widgetId, ads in
@@ -48,11 +48,11 @@ private class AdsterCarouselBannerLoader: NSObject, MediationAdDelegate {
     let placementId: String
     let adClickChannel: FlutterMethodChannel
     let publisherProvidedId: String?
-    let customTargetingParams: [String: String]?
+    let customTargetingParams: [String: [String]]?
     var onAdLoadComplete: ((String, [MediationBannerAd]) -> Void)?
     var onAdLoadFailed: ((String) -> Void)?
 
-    init(widgetId: String, placementId: String, adClickChannel: FlutterMethodChannel, publisherProvidedId: String?, customTargetingParams: [String: String]?) {
+    init(widgetId: String, placementId: String, adClickChannel: FlutterMethodChannel, publisherProvidedId: String?, customTargetingParams: [String: [String]]?) {
         self.widgetId = widgetId
         self.placementId = placementId
         self.adClickChannel = adClickChannel

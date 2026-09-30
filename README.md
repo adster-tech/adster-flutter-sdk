@@ -2,8 +2,8 @@
 
 The `adster_flutter_sdk` gives your Flutter app complete monetization support through a single mediation layer. It supports Banner, Native, Custom Native, Interstitial, Rewarded, App Open, Unified, and Carousel ad formats on both Android and iOS, with revenue reporting, click/impression callbacks, and GAM predefined custom targeting.
 
-- **Android** native dependency: `com.adstertech:orchestrationsdk:2.6.4`
-- **iOS** native dependency: `Adster ~> 1.6.8`
+- **Android** native dependency: `com.adstertech:orchestrationsdk:2.8.2`
+- **iOS** native dependency: `Adster 1.7.1`
 
 If you get stuck at any point, contact [support@adster.tech](mailto:support@adster.tech).
 
@@ -57,7 +57,7 @@ or add it to `pubspec.yaml` and run `flutter pub get`:
 
 ```yaml
 dependencies:
-  adster_flutter_sdk: ^1.2.0
+  adster_flutter_sdk: ^1.2.7
 ```
 
 Import it wherever you show ads:
@@ -487,8 +487,10 @@ Two optional parameters are available on every widget and every `loadAd` call:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `customTargetArgs` | `Map<String, String>?` | Key/value pairs sent as GAM custom targeting. |
+| `customTargetArgs` | `Map<String, dynamic>?` | GAM targeting; each value must be a `String` or `List<String>`. |
 | `publisherProvidedId` | `String?` | The PPID sent with the request. |
+
+String and list values can be mixed in the same map. Existing `Map<String, String>` values remain supported. Lists are forwarded as multiple values for one key on Android and iOS.
 
 ### Widget-based formats
 
@@ -497,7 +499,7 @@ AdsterBannerAd(
   adPlacementName: "your_placement_name",
   adSize: AdsterAdSize.medium,
   customTargetArgs: const {
-    "content_category": "sports",
+    "content_category": ["sports", "news"],
     "user_tier": "premium",
   },
   publisherProvidedId: "user-ppid-123",
@@ -512,7 +514,10 @@ The same two parameters exist on `AdsterNativeAd`, `AdsterNativeCustomAd`, `Adst
 ```dart
 await AdsterInterstitialAds().loadAd(
   adPlacementName: "your_placement_name",
-  customTargetArgs: const {"content_category": "news"},
+  customTargetArgs: const {
+    "content_category": ["news", "technology"],
+    "user_tier": "premium",
+  },
   publisherProvidedId: "user-ppid-123",
 );
 ```
