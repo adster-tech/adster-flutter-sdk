@@ -57,7 +57,7 @@ or add it to `pubspec.yaml` and run `flutter pub get`:
 
 ```yaml
 dependencies:
-  adster_flutter_sdk: ^1.2.7
+  adster_flutter_sdk: ^1.2.8
 ```
 
 Import it wherever you show ads:
@@ -233,6 +233,8 @@ AdsterBannerAd(
 ### Native ads
 
 Your `onAdLoaded` builder receives the ad data, the platform media view, and a click handler. Bind the click handler to the components the user can tap so clicks are tracked correctly.
+
+Give `mediaView` bounded width and height (for example, `Expanded` inside a bounded card or an `AspectRatio`). On iOS it fills that slot and retains native ad registration and attribution; render the headline, body and CTA in your Flutter builder. For expandable PIP layouts, keep the ad widget mounted and size the expanded card to the available safe area.
 
 ```dart
 AdsterNativeAd(

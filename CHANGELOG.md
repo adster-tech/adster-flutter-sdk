@@ -1,3 +1,6 @@
+## 1.2.8
+- Fixed iOS native and unified native media slots to fill Flutter bounds. Preserved native registration and ad attribution.
+
 ## 1.2.7
 - Updated Android SDK to version 2.8.2 and iOS SDK (Adster) to version 1.7.1.
 - Added `List<String>` support alongside single strings in `customTargetArgs` for every Flutter ad API, including reloads.
