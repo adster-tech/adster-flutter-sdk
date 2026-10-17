@@ -1,3 +1,9 @@
+## 1.2.9
+- Fixed Android banner view ownership by widget ID so simultaneous banners and repeated placements do not share or reparent the same native view.
+- Used Android hybrid composition to keep banner ads visible inside dialogs.
+- Added per-widget banner disposal on Android and iOS, including pending-load cancellation, late-callback protection, and native ad cleanup.
+- Fixed iOS banner lifecycle retention and added cleanup when platform views or the Flutter engine are released.
+
 ## 1.2.8
 - Fixed iOS native and unified native media slots to fill Flutter bounds. Preserved native registration and ad attribution.
 

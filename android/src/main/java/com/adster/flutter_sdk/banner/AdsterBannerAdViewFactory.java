@@ -6,7 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import io.flutter.plugin.common.BinaryMessenger;
+import java.util.Map;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
@@ -23,6 +23,10 @@ public class AdsterBannerAdViewFactory extends PlatformViewFactory {
     @Override
     public PlatformView create(Context context, int viewId, @Nullable Object args) {
         Log.d(this.getClass().getName(), "create: " + viewId + " Args: " + (args != null ? args.toString() : ""));
-        return new AdsterBannerAds(context, adsterBannerAdBridge);
+        Object widgetId = args instanceof Map ? ((Map<?, ?>) args).get("widgetId") : null;
+        if (!(widgetId instanceof String) || ((String) widgetId).isEmpty()) {
+            throw new IllegalArgumentException("Banner creation requires a widgetId");
+        }
+        return new AdsterBannerAds(context, (String) widgetId, adsterBannerAdBridge);
     }
 }

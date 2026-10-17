@@ -57,7 +57,7 @@ or add it to `pubspec.yaml` and run `flutter pub get`:
 
 ```yaml
 dependencies:
-  adster_flutter_sdk: ^1.2.8
+  adster_flutter_sdk: ^1.2.9
 ```
 
 Import it wherever you show ads:

@@ -3,6 +3,13 @@ import UIKit
 import AdsFramework
 
 public class AdsterSDKPlugin: NSObject, FlutterPlugin {
+    private var bannerAdBridge: AdsterBannerAdBridge?
+
+    public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+        bannerAdBridge?.dispose()
+        bannerAdBridge = nil
+    }
+
         
     public static func register(with registrar: FlutterPluginRegistrar) {
         
@@ -10,7 +17,10 @@ public class AdsterSDKPlugin: NSObject, FlutterPlugin {
             print("Ad initialized \(String(describing: status ?? nil))")
         })
 
+        let instance = AdsterSDKPlugin()
         let bannerAdBridge = AdsterBannerAdBridge(messenger: registrar.messenger())
+        instance.bannerAdBridge = bannerAdBridge
+        registrar.publish(instance)
 
         let bannerAdViewFactory = AdsterBannerAdViewFactory(messenger: registrar.messenger(), adBridge: bannerAdBridge)
         registrar.register(bannerAdViewFactory, withId: "adster_banner")

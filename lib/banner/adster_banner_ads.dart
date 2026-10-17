@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:adster_flutter_sdk/adster_flutter_sdk.dart';
 import 'package:adster_flutter_sdk/banner/adster_banner_callback_channel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 
 class AdsterBannerAd extends StatefulWidget {
   final String adPlacementName;
@@ -48,6 +52,7 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
     widgetId = UniqueKey().toString();
     _loadAdFuture = _loadAd();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (!mounted) return;
       AdsterBannerCallbackChannel.instance.registerWidget(
         widgetId,
         AdsterBannerAdCallback(
@@ -57,15 +62,16 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
           onAdImpression: () {
             widget.clickCallback?.onAdImpression.call();
           },
-          onAdRevenuePaid: (revenue, adUnitId, network, currency, precisionType) {
-            widget.clickCallback?.onAdRevenuePaid.call(
-              revenue,
-              adUnitId,
-              network,
-              currency,
-              precisionType,
-            );
-          },
+          onAdRevenuePaid:
+              (revenue, adUnitId, network, currency, precisionType) {
+                widget.clickCallback?.onAdRevenuePaid.call(
+                  revenue,
+                  adUnitId,
+                  network,
+                  currency,
+                  precisionType,
+                );
+              },
         ),
       );
     });
@@ -89,10 +95,10 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
                 return widget.onAdLoaded != null
                     ? widget.onAdLoaded!(_getPlatformWidget())
                     : SizedBox(
-                      height: widget.adSize.height,
-                      width: widget.adSize.width,
-                      child: _getPlatformWidget(),
-                    );
+                        height: widget.adSize.height,
+                        width: widget.adSize.width,
+                        child: _getPlatformWidget(),
+                      );
               } else if (snapshot.hasError) {
                 if (snapshot.error is PlatformException) {
                   return widget.onFailure(
@@ -130,13 +136,33 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
   Widget _getPlatformWidget() {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return AndroidView(
+        // Keep the native ad visible in dialogs and overlapping Flutter routes.
+        // Texture composition can leave the ad's WebView blank in these layouts.
+        return PlatformViewLink(
           viewType: 'adster_banner',
-          creationParams: {
-            'adPlacementName': widget.adPlacementName,
-            'widgetId': widgetId,
+          surfaceFactory: (context, controller) => AndroidViewSurface(
+            controller: controller as AndroidViewController,
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          ),
+          onCreatePlatformView: (params) {
+            final controller = PlatformViewsService.initExpensiveAndroidView(
+              id: params.id,
+              viewType: 'adster_banner',
+              layoutDirection: Directionality.of(context),
+              creationParams: {
+                'adPlacementName': widget.adPlacementName,
+                'widgetId': widgetId,
+              },
+              creationParamsCodec: const StandardMessageCodec(),
+              onFocus: () => params.onFocusChanged(true),
+            );
+            controller.addOnPlatformViewCreatedListener(
+              params.onPlatformViewCreated,
+            );
+            controller.create();
+            return controller;
           },
-          creationParamsCodec: StandardMessageCodec(),
         );
       case TargetPlatform.iOS:
         return UiKitView(
@@ -154,9 +180,25 @@ class _AdsterBannerAdState extends State<AdsterBannerAd> {
     }
   }
 
+  Future<void> _disposeNativeBanner() async {
+    try {
+      await _channel.invokeMethod<void>('disposeBanner', {
+        'widgetId': widgetId,
+      });
+    } on PlatformException catch (error) {
+      debugPrint('Failed to dispose banner $widgetId: $error');
+    } on MissingPluginException {
+      // The engine may already have detached and released its banners.
+    }
+  }
+
   @override
   void dispose() {
     AdsterBannerCallbackChannel.instance.removeWidget(widgetId);
+    if (defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS) {
+      unawaited(_disposeNativeBanner());
+    }
     super.dispose();
   }
 }

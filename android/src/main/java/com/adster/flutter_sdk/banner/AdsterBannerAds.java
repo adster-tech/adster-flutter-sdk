@@ -1,48 +1,47 @@
 package com.adster.flutter_sdk.banner;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.adster.flutter_sdk.core.AdsterBaseAdBridge;
-import com.adster.sdk.mediation.AdError;
-import com.adster.sdk.mediation.AdEventsListener;
-import com.adster.sdk.mediation.AdRequestConfiguration;
-import com.adster.sdk.mediation.AdSterAdLoader;
-import com.adster.sdk.mediation.MediationAdListener;
-import com.adster.sdk.mediation.MediationBannerAd;
 
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
 public class AdsterBannerAds implements PlatformView {
-    final Context context;
-    final FrameLayout container;
+    private final FrameLayout container;
+    private final AdsterBannerAdBridge bridge;
+    private final AdsterBannerAdBridge.BannerRequest request;
 
-    public AdsterBannerAds(Context context, AdsterBaseAdBridge adsterBannerAdBridge) {
-        this.context = context;
+    // Retain the existing constructor used by the separate unified-ad bridge.
+    public AdsterBannerAds(Context context, AdsterBaseAdBridge bridge) {
+        this.bridge = null;
+        request = null;
         container = new FrameLayout(context);
-        container.removeAllViews();
-        container.addView(adsterBannerAdBridge.getMediaView());
+        container.addView(bridge.getMediaView());
     }
 
-    @Nullable
+    public AdsterBannerAds(Context context, String widgetId, AdsterBannerAdBridge bridge) {
+        this.bridge = bridge;
+        request = bridge.getBanner(widgetId);
+        // Never steal a view from another active slot to hide an ownership error.
+        if (request.view.getParent() != null) {
+            throw new IllegalStateException("Banner already attached for widget " + widgetId);
+        }
+        container = new FrameLayout(context);
+        container.addView(request.view);
+    }
+
+    @NonNull
     @Override
     public View getView() {
-        Log.d("AdsterBannerAds", "getView");
         return container;
     }
 
     @Override
     public void dispose() {
-        Log.d("AdsterBannerAds", "dispose");
-        //channel.setMethodCallHandler(null);
+        container.removeAllViews();
+        if (bridge != null) bridge.release(request);
     }
 }

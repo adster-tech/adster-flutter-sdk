@@ -1,54 +1,30 @@
 import Flutter
-import SwiftUI
 import UIKit
 import AdsFramework
 
 class AdsterBannerAdView: NSObject, FlutterPlatformView {
-    
-    private var _view: UIView
-    private let label = UILabel()
+    private var nativeView: UIView
     private var widgetId: String?
-    private var controller: UIViewController
-    private var adBridge: AdsterBannerAdBridge
-    
+    private weak var adBridge: AdsterBannerAdBridge?
+    private weak var banner: AdsterBannerAd?
+
     init(frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?, adBridge: AdsterBannerAdBridge) {
-        let view = UIView(frame: frame)
-        view.backgroundColor = .lightGray // placeholder
-        self._view = view
-        
-        label.text = "Natively not loaded"
-        label.textAlignment = .center
-        label.frame = _view.bounds
-        label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        self.controller = UIApplication.shared.windows.first!.rootViewController!
+        nativeView = UIView(frame: frame)
         self.adBridge = adBridge
         super.init()
-        
-        if let argsMap = args as? [String: Any] {
-            self.widgetId = argsMap["widgetId"] as? String
-            if self.widgetId != nil {
-                if let bannerAd =  adBridge.getBannerAd(widgetId: widgetId!){
-                    bannerAd.bannerView()?.eventDelegate = self
-                    self._view = bannerAd.bannerView()?.view ?? label
-                }
-            }
+        guard let args = args as? [String: Any], let id = args["widgetId"] as? String,
+              let banner = adBridge.getBannerAd(widgetId: id), !banner.isDisposed,
+              let view = banner.bannerView()?.view, view.superview == nil else { return }
+        widgetId = id
+        self.banner = banner
+        nativeView = view
+    }
+
+    func view() -> UIView { nativeView }
+
+    deinit {
+        if let widgetId, let banner {
+            adBridge?.clearWidget(widgetId, expected: banner)
         }
-    }
-    
-    func view() -> UIView {
-        return _view
-    }
-}
-
-extension AdsterBannerAdView: MediationBannerAdEventDelegate {
-    func recordBannerClick() {
-        print("Ad clicked")
-        adBridge.adClickChannel.invokeMethod(String("onAdClicked"), arguments: ["widgetId":widgetId])
-    }
-
-    func recordBannerImpression() {
-        print("Ad impression recorded")
-        adBridge.adClickChannel.invokeMethod(String("onAdImpression"), arguments: ["widgetId":widgetId])
     }
 }
