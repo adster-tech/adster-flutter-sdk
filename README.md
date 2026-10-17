@@ -230,6 +230,12 @@ AdsterBannerAd(
 );
 ```
 
+#### Sizing and lifecycle
+
+- Match `adSize` to the configured placement size in logical pixels. It controls layout, not creative resizing. Allow enough content space after padding, borders, and dialog insets.
+- A custom `onAdLoaded` builder replaces the default sizing wrapper. Wrap its banner view in a `SizedBox` matching `adSize`.
+- Use a separate `AdsterBannerAd` per slot. On Android and iOS, native resources and callbacks are cleaned up automatically when the widget is disposed; hidden widgets kept mounted remain active.
+
 ### Native ads
 
 Your `onAdLoaded` builder receives the ad data, the platform media view, and a click handler. Bind the click handler to the components the user can tap so clicks are tracked correctly.
